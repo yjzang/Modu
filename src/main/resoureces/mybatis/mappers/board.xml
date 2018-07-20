@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardDB">
+	
+	<insert id="insert" parameterType="boardVo" >
+		<selectKey keyProperty="boardNo" resultType="string" order="BEFORE">  
+			select seq_boardNo.nextval FROM dual
+		</selectKey>
+	
+		<![CDATA[
+		insert into board_tbl(boardNo,boardTitle,boardContent,boardRegDate)
+		values(#{boardNo},#{boardTitle},#{boardContent},sysdate)	
+	       ]]>
+    
+	
+	</insert>
+	
+	
+	
+	<insert id="insertFile" parameterType="fileVo" >
+		<selectKey keyProperty="boardImgNo" resultType="string" order="BEFORE">  
+			select seq_boardImgNo.nextval FROM dual
+	 	</selectKey>
+	
+		<![CDATA[
+		insert into board_img_tbl
+		values(#{boardImgNo},#{originalName},#{saveName},#{imgSize},#{boardImgPath},#{boardNo},#{userNo})	
+	       ]]>
+    
+	</insert>
+	
+	
+	<select id="postCheck" parameterType="boardVo" resultType="int">
+		select count(*)
+		from board_tbl
+	</select>
+	
+	
+	<select id="getPostList" resultType="boardVo" >
+
+		select boardNo,boardTitle,boardContent,boardRegDate
+		from board_tbl
+		order by boardRegdate desc
+
+	</select>
+	
+
+	
+	<select id="getPostImgs" resultType="fileVo" >
+
+		select boardImgNo,saveName,userNo,boardNo
+		from board_img_tbl
+		where boardNo=#{boardNo}
+
+	</select>
+	
+	<delete id="deleteImg" parameterType="string">
+		delete from board_img_tbl
+		where boardNo = #{boardNo}
+	</delete>
+	
+	<delete id="deletePost" parameterType="string">
+		delete from board_tbl
+		where boardNo = #{boardNo}
+	</delete>
+	
+	<delete id="deleteCmt" parameterType="string">
+		delete from comment_tbl
+		where commentNo = #{commentNo}
+	</delete>
+	
+	<delete id="deleteCmtAll" parameterType="string">
+		delete from comment_tbl
+		where boardNo = #{boardNo}
+	</delete>
+	
+
+	<select id="getLikeState" parameterType="map" resultType="string">
+		select likeState 
+		from like_tbl
+		where boardNo = #{boardNo} 
+		and userNo = #{userNo}					
+	</select>
+
+
+		
+	<insert id="insertLike" parameterType="boardVo">
+		insert into like_tbl
+		values(seq_likeno.nextval,#{likeState},#{boardNo},#{userNo})
+	</insert>
+	
+	
+	<update id="updateLike" parameterType="boardVo"> 
+		update like_tbl 
+		set likeState=#{likeState}
+		where boardNo=#{boardNo}
+		and userNo=#{userNo}
+	</update>
+
+
+	<select id="likeCheck" parameterType="boardVo" resultType="int">
+		select count(*)
+		from like_tbl
+		where boardNo=#{boardNo}
+		and userNo=#{userNo}
+		
+	</select>
+	
+	
+	<select id="likeCount" parameterType="String" resultType="int">
+		select count(*)
+		from like_tbl
+		where boardNo=#{boardNo}
+		and likeState=1
+	</select>
+	
+	
+	<select id="likeState" parameterType="String" resultType="String">
+		select likeState
+		from like_tbl
+		where boardNo=#{boardNo}
+		and userNo=#{userNo}
+	</select>
+	
+	<insert id="insertCmt" parameterType="boardVo">
+		insert into comment_tbl
+		values(seq_commentno.nextval,#{commentContent},#{userNo},#{boardNo},sysdate)
+		
+	</insert>
+	
+	<select id="getCmtList"  resultType="boardVo">
+		select userName,commentNo,commentContent,u.userNo,boardNo,commentRegDate
+		from user_tbl u,comment_tbl c
+		where u.userNo = c.userNo
+		and boardNo=#{boardNo} 
+		order by commentRegDate desc
+		
+	</select>
+	
+	
+	<select id="cmtCount" parameterType="String" resultType="int">
+		select count(*)
+		from comment_tbl
+		where boardNo=#{boardNo}
+	</select>
+	
+	
+	
+</mapper>

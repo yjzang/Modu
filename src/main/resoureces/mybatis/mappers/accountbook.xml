@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="accountbook">
+	
+	<select id="getAccountList" parameterType="Map" resultType="com.modu.vo.AccountbookVo">
+		<![CDATA[
+		select accountbookno,accountbookusage,accountbookspend,accountbookincome,categoryno,abt.groupno,memberfeeno,categoryname,to_char(accountbookregdate,'yyyy"년" mm"월" dd"일"') accountbookregdate
+		from accountbook_tbl abt join category_tbl cate using(categoryno)
+		where abt.groupno=#{groupNo} and abt.accountbookregdate between #{startDate} and #{endDate} 
+		]]>
+		<if test="spendFlag == 'spend'">
+		    and accountbookincome is null
+		</if>
+		<if test="spendFlag == 'income'">
+		    and accountbookspend is null
+		</if>
+		<![CDATA[
+		order by accountbookregdate , accountbookno asc
+		]]>
+	</select>
+	
+	<select id="getCategoryList" parameterType="int" resultType="com.modu.vo.AccountbookCategoryVo">
+		<![CDATA[
+			select categoryno,categoryname
+			from category_tbl
+			where groupno=#{groupNo}
+			order by categoryno asc
+		]]>
+	</select>
+	
+	<select id="searchAccountListByTag" parameterType="Map" resultType="com.modu.vo.AccountbookVo">
+		<![CDATA[
+		select distinct accountbookno,accountbookusage,accountbookspend,accountbookincome,categoryno,abt.groupno,memberfeeno,categoryname,to_char(accountbookregdate,'yyyy"년" mm"월" dd"일"') accountbookregdate
+		from accountbook_tbl abt join category_tbl cate using(categoryno) join accountbook_tag_tbl using(accountbookno) join tag_tbl using(tagno)
+		where abt.groupno=#{groupNo} and tagname like #{data}
+		]]>
+		<if test="spendFlag == 'spend'">
+		    and accountbookincome is null
+		</if>
+		<if test="spendFlag == 'income'">
+		    and accountbookspend is null
+		</if>
+		<![CDATA[
+		order by accountbookregdate , accountbookno asc
+		]]>
+	</select>
+
+	<select id="searchAccountListByUsage" parameterType="Map" resultType="com.modu.vo.AccountbookVo">
+		<![CDATA[
+		select accountbookno,accountbookusage,accountbookspend,accountbookincome,categoryno,abt.groupno,memberfeeno,categoryname,to_char(accountbookregdate,'yyyy"년" mm"월" dd"일"') accountbookregdate
+		from accountbook_tbl abt join category_tbl cate using(categoryno)
+		where abt.groupno=#{groupNo} and accountbookusage like #{data}
+		]]>
+		<if test="spendFlag == 'spend'">
+		    and accountbookincome is null
+		</if>
+		<if test="spendFlag == 'income'">
+		    and accountbookspend is null
+		</if>
+		<![CDATA[
+		order by accountbookregdate , accountbookno asc
+		]]>
+	</select>
+	
+	<select id="getTagListByGroupNo" parameterType="int" resultType="com.modu.vo.AccountbookTagVo">
+		<![CDATA[
+			select accountbookno,tagno,tagname
+			from accountbook_tbl join accountbook_tag_tbl using(accountbookno) join tag_tbl using(tagno)
+			where groupno=#{groupNo}
+			order by accountbookno , tagno asc
+		]]>
+	</select>
+	
+	<select id="getTagListByTagName" parameterType="map" resultType="com.modu.vo.AccountbookTagVo">
+		<![CDATA[
+			select tagno,accountbooktagno,accountbookno,tagname
+			from accountbook_tag_tbl join tag_tbl using(tagno)
+			where accountbookno in (select accountbookno
+			from accountbook_tbl join accountbook_tag_tbl using(accountbookno) join tag_tbl using(tagno)
+			where tagname like #{data})
+			order by accountbookno
+		]]>
+	</select>
+	
+	<insert id="insertTag" parameterType="com.modu.vo.AccountbookTagVo">
+		<selectKey keyProperty="tagno" resultType="int" order="BEFORE">	
+			select seq_tagno.nextval from dual
+		</selectKey>
+		<![CDATA[
+			insert into tag_tbl(tagno,tagname) 
+			values(#{tagno}
+			,#{tagname})
+		]]>
+	</insert>
+	
+	<select id="checkTag" parameterType="com.modu.vo.AccountbookTagVo" resultType="com.modu.vo.AccountbookTagVo">
+		<![CDATA[
+			select tagno
+			from tag_tbl
+			where tagname = #{tagname}
+		]]>
+	</select>
+	
+	<insert id="connectTag" parameterType="com.modu.vo.AccountbookTagVo">
+		<![CDATA[
+			insert into accountbook_tag_tbl values(
+			seq_accountbooktagno.nextval,
+			#{accountbookno},
+			#{tagno})
+		]]>
+	</insert>
+	
+	<insert id="connectTagGroup" parameterType="hashmap">	
+	
+		INSERT INTO accountbook_tag_tbl (accountbooktagno,accountbookno,tagno)
+		SELECT seq_accountbooktagno.nextval, T.*
+		FROM (
+		<foreach collection="Acclist" item="item" index="ix" separator="UNION ALL">
+		SELECT #{item},#{tagno}
+		FROM DUAL 
+		</foreach>
+		) T
+		
+	</insert>
+	
+	<update id="connectUpdateTag" parameterType="com.modu.vo.AccountbookTagVo">
+		<![CDATA[
+			UPDATE accountbook_tag_tbl 
+			SET tagno=#{tagno},
+    		accountbookno=#{accountbookno}
+			WHERE accountbooktagno=#{accountbooktagno}
+		]]>
+	</update>
+	
+	<select id="getTagListByAccountNo" parameterType="int" resultType="com.modu.vo.AccountbookTagVo">
+		<![CDATA[
+			select accountbookno,tagno,tagname,accountbooktagno
+			from accountbook_tbl join accountbook_tag_tbl using(accountbookno) join tag_tbl using(tagno)
+			where accountbookno=#{accountNo}
+			order by accountbookno , tagno asc
+		]]>
+	</select>
+	
+	<delete id="tagDelete" parameterType="com.modu.vo.AccountbookTagVo">
+		<![CDATA[
+			delete from accountbook_tag_tbl 
+			where accountbooktagno=#{accountbooktagno}
+		]]>
+	</delete>
+	
+	<insert id="saveAccountbookSpend" parameterType="com.modu.vo.AccountbookVo">
+		<selectKey keyProperty="accountbookno" resultType="int" order="BEFORE">	
+			select seq_accountbookno.nextval from dual
+		</selectKey>
+		<![CDATA[
+			insert into accountbook_tbl
+			(accountbookno,
+			accountbookusage,
+			accountbookspend,
+			categoryno,
+			groupno,
+			accountbookregdate) 
+			values(
+			#{accountbookno},
+			#{accountbookUsage},
+			#{accountbookSpend},
+			#{categoryNo},
+			#{groupNo},
+			#{accountbookRegDate}) 
+		]]>
+	</insert>
+	
+	<insert id="saveAccountbookIncome" parameterType="com.modu.vo.AccountbookVo">
+		<selectKey keyProperty="accountbookno" resultType="int" order="BEFORE">	
+			select seq_accountbookno.nextval from dual
+		</selectKey>
+		<![CDATA[
+			insert into accountbook_tbl
+			(accountbookno,
+			accountbookusage,
+			accountbookincome,
+			categoryno,
+			groupno,
+			accountbookregdate) 
+			values(
+			#{accountbookno},
+			#{accountbookUsage},
+			#{accountbookSpend},
+			#{categoryNo},
+			#{groupNo},
+			#{accountbookRegDate}) 
+		]]>
+	</insert>
+	
+	<update id="updateAccountbook" parameterType="map">
+		<![CDATA[
+			update accountbook_tbl set
+		]]>
+		<if test="updatePos == 'accountbookusage'">
+		    accountbookusage=#{data}
+		</if>
+		<if test="updatePos == 'accountbookregdate'">
+		    accountbookregdate=#{data}
+		</if>
+		<if test="updatePos == 'accountbookspend'">
+			<if test="spendFlag == 'spend'">
+		    	accountbookspend=#{data}
+			</if>
+			<if test="spendFlag == 'income'">
+		    	accountbookincome=#{data}
+			</if>
+		</if>
+		<if test="updatePos == 'categoryno'">
+		    categoryno=#{data}
+		</if>
+		<![CDATA[
+			where accountbookno=#{accountbookno}
+		]]>	
+	</update>
+	
+	<delete id="deleteTag" parameterType="hashmap">
+		<![CDATA[
+			delete from accountbook_tag_tbl
+			where accountbookno in 
+		]]>	
+			<foreach item="item" collection="Acclist" index="index" open="(" separator="," close=")">
+		        #{item}
+		    </foreach>
+	</delete>
+	
+	<delete id="deleteaccountbook" parameterType="hashmap">
+		<![CDATA[
+			delete from accountbook_tbl 
+			where accountbookno in 
+		]]>	
+			<foreach item="item" collection="Acclist" index="index" open="(" separator="," close=")">
+		        #{item}
+		    </foreach>		
+	</delete>
+	
+	<select id="getChartDataByDate" parameterType="Map" resultType="com.modu.vo.AccountbookCategoryVo">
+		<![CDATA[
+			select categoryname,total
+			from (select 
+			]]>
+			<if test="spendFlag == 'spend'">
+			    sum(nvl(accountbookspend,0)) total
+			</if>
+			<if test="spendFlag == 'income'">
+			    sum(nvl(accountbookincome,0)) total
+			</if>	
+			<![CDATA[
+			,categoryno
+			from accountbook_tbl
+			where groupno=#{groupNo} and accountbookregdate between #{startDate} and #{endDate}
+			]]>
+			<if test="spendFlag == 'spend'">
+			    and accountbookincome is null
+			</if>
+			<if test="spendFlag == 'income'">
+			    and accountbookspend is null
+			</if>
+			<![CDATA[
+			group by categoryno) join category_tbl using(categoryno)
+		]]>
+	</select>
+	
+	<select id="getChartDataByTag" parameterType="Map" resultType="com.modu.vo.AccountbookCategoryVo">
+		<![CDATA[
+			select categoryname,total
+			from (  select accountbookno,accountbookusage,accountbookspend,accountbookincome,categoryno,abt.groupno,memberfeeno,categoryname,to_char(accountbookregdate,'yyyy"년" mm"월" dd"일"') accountbookregdate,tagname
+        			from accountbook_tbl abt join category_tbl cate using(categoryno) join accountbook_tag_tbl using(accountbookno) join tag_tbl using(tagno)
+        			where abt.groupno=#{groupNo} and tagname like #{data}
+        			]]>
+					<if test="spendFlag == 'spend'">
+					    and accountbookincome is null
+					</if>
+					<if test="spendFlag == 'income'">
+					    and accountbookspend is null
+					</if>
+					<![CDATA[
+        			order by accountbookregdate , accountbookno asc) join (	select 
+        																	]]>
+																			<if test="spendFlag == 'spend'">
+																			    sum(nvl(accountbookspend,0)) total
+																			</if>
+																			<if test="spendFlag == 'income'">
+																			    sum(nvl(accountbookincome,0)) total
+																			</if>	
+																			<![CDATA[
+        																	,categoryno
+                                                                			from accountbook_tbl
+                                                                			where groupno=1
+                                                                			group by categoryno) using(categoryno)
+                    group by categoryname,total
+
+		]]>
+	</select>
+	
+	<select id="getChartDataByUsage" parameterType="Map" resultType="com.modu.vo.AccountbookCategoryVo">
+		<![CDATA[
+			select categoryname,total
+			from (select 
+			]]>
+			<if test="spendFlag == 'spend'">
+			    sum(nvl(accountbookspend,0)) total
+			</if>
+			<if test="spendFlag == 'income'">
+			    sum(nvl(accountbookincome,0)) total
+			</if>	
+			<![CDATA[
+			,categoryno
+			from accountbook_tbl
+			where groupno=#{groupNo} and accountbookusage like #{data}
+			]]>
+			<if test="spendFlag == 'spend'">
+			    and accountbookincome is null
+			</if>
+			<if test="spendFlag == 'income'">
+			    and accountbookspend is null
+			</if>
+			<![CDATA[
+			group by categoryno) join category_tbl using(categoryno)
+		]]>
+	</select>
+	
+	<delete id="categoryDelete" parameterType="map">
+		<![CDATA[
+			delete from category_tbl
+			where categoryno=#{categoryno} and groupno=#{groupNo}
+		]]>
+	</delete>
+	
+	<update id="categoryUpdate" parameterType="map">
+		<![CDATA[
+			UPDATE category_tbl
+			SET categoryname=#{categoryname}
+			WHERE categoryno=#{categoryno}
+		]]>
+	</update>
+	
+	<insert id="categoryInsert" parameterType="map">	
+		<![CDATA[
+			insert into category_tbl(categoryno,categoryname,groupNo) 
+			values(seq_categoryno.nextval
+			,#{categoryname}
+            ,#{groupNo})
+		]]>
+	</insert>
+
+</mapper>

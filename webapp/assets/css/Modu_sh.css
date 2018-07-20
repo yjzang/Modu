@@ -1,0 +1,278 @@
+
+	@font-face{
+		font-family:"Nanum Gothic";
+		src:url('../fonts/NanumGothic.ttf') format('truetype');
+	}
+	@font-face{
+		font-family:"NanumGothicExtraBold";
+		src: url('../fonts/NanumGothicExtraBold.ttf') format('truetype');
+
+	}
+	@font-face{
+		font-family:"BMJUA_ttf";
+		src: url('../fonts/BMJUA_ttf.ttf') format('truetype');
+	}
+
+	.container {
+		width: 1240px;
+		max-width: none !important;
+		padding: 0;
+
+	}
+	nav{
+		font-family:"Nanum Gothic" , sans-serif; 
+		font-weight: 900;
+	}
+	.carousel-caption{ 	
+		text-shadow: black 0.2em 0.2em 0.2em; 
+
+	}
+	h1{
+		font-family: 'NanumGothicExtraBold', sans-serif;  font-weight: 800; 
+		font-size: 3em;
+	}
+	h4{
+		font-family: 'NanumGothicExtraBold', sans-serif;  font-weight: bold; 
+		font-size: 1.5em;
+	}
+
+	.ment{
+		font-family:"BMJUA_ttf"; 
+		
+	}
+
+	div.ment:after {
+		content: "";
+		display: block;
+		width: 80px;
+		border-bottom: solid 5px #0070c0;
+		margin: auto;
+	}
+
+	span.ment01,.ment02{
+	
+		font-size: 2em;
+	}
+
+	span.ment03{
+		font-size: 1.5em;
+	}
+
+	
+	.carousel-item img{ 
+
+		height: 480px;
+
+	}
+
+	.t-button {
+		background-color: transparent !important;
+		background-image: none !important;
+		border-color: transparent;
+		border: none;
+		cursor:pointer;
+		color: #FFFFFF; 
+	}
+
+	.searchForm{
+		background-color: transparent !important;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		border-radius: 0;
+	}
+
+	#secNav{
+		/*border-top: 1px #dadada solid;*/
+
+		/* margin-top: 75px; */
+	}
+
+	#thirdNav{
+		border-top: 1px #dadada solid;
+	}
+
+	.nav-item{
+		margin: 5px 20px 5px 20px;
+
+
+	}
+	.clubIcon{
+		margin: 14px 20px 0px 20px;
+	}
+
+	ul.icon{
+
+		display: flex;
+		align-items: center;
+		text-align: center;
+	}
+	li{
+		display: inline-block;
+		
+	}
+
+	.btn-mint{
+		border:1px solid #54c9ad; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:14px;font-family:arial, helvetica, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: 0px 0px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFDFA;
+		background-color: #54c9ad; background-image: -webkit-gradient(linear, left top, left bottom, from(#54c9ad), to(#54c9ad));
+		
+	}
+
+	.btn-mint:hover{
+		border:1px solid #68dabf;
+		background-color: #68dabf; background-image: -webkit-gradient(linear, left top, left bottom, from(#68dabf), to(#257864));
+		background-image: -webkit-linear-gradient(top, #257864, #257864);
+		background-image: -moz-linear-gradient(top, #257864, #257864);
+		background-image: -ms-linear-gradient(top, #257864, #257864);
+		background-image: -o-linear-gradient(top, #257864, #257864);
+		background-image: linear-gradient(to bottom, #257864, #257864);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#257864, endColorstr=#257864);
+	}
+
+
+	.clubIcon.active a{
+		color:  #54c9ad !important;
+	}
+
+	.menuTab.active a{
+		color:  #0179c1 !important;
+	}
+
+	body { padding-top: 200px; }
+
+	header { position: fixed; top: 0; left: 0; width: 100%; height: 40px; transition: top 0.2s ease-in-out; z-index: 1 }
+
+	.nav-up { top: -200px;  }
+	
+	
+	
+	
+	.boardImg img{
+		margin : 2% auto 2% auto;
+		width: 90%;
+	}
+
+	h4{
+		font-family:"Typo_SsangmunDongB" , sans-serif; 
+		font-weight: 800;
+		font-size: 2em;
+	}
+
+	h5{
+		font-family:"Nanum Gothic" , sans-serif; 
+		font-weight: bold;
+		font-size: 1em;
+	}
+	.comment{
+
+		font-family:"Nanum Gothic" , sans-serif; 
+		font-weight: 200;
+		font-size: 0.8em;
+	}
+	
+	
+	.card-body{
+		font-family:"NanumGothicExtraBold" , sans-serif; 
+		font-weight: 800;
+		font-size: 1.2em;
+	}
+
+	.custom-file-label::after {
+
+		content: url('../images/up.png');
+		margin-top: 2px;
+		height: auto;
+
+	}
+	input[type=checkbox]
+	{
+		/* Double-sized Checkboxes */
+		-ms-transform: scale(2); /* IE */
+		-moz-transform: scale(2); /* FF */
+		-webkit-transform: scale(2); /* Safari and Chrome */
+		-o-transform: scale(2); /* Opera */
+		padding: 10px;
+
+	}
+	
+	
+	 /*  board.css  */ 
+	 
+	 @font-face{
+	 
+		font-family:"Typo_SsangmunDongB";
+		src: url('../fonts/Typo_SsangmunDongB.ttf') format('truetype');
+
+	}
+	
+	body { padding-top: 280px; // 헤더 높이만큼 여백부여 }
+
+	header { position: fixed; top: 0; left: 0; width: 100%; height: 40px; transition: top 0.2s ease-in-out; z-index: 1 }
+
+	.nav-up { top: -200px; // 헤더 높이와 같게 }
+	
+	.boardImg img{
+		margin : 2% auto 2% auto;
+		width: 90%;
+	}
+
+
+	/*모임메인*/
+	.hotPlace img{
+		margin:auto;
+	}
+
+	.localHotplaceArea{
+		width: 1240px;
+		height: 100%;
+		display:flex;
+		padding:50px;
+		margin: 50px auto 50px auto;
+
+	}
+	.localHotplaceBackground{
+		background-color: #9dc3e6;
+		margin-left: -600%;
+		margin-right: -600%;
+
+	}
+	.localHotplaceTop6{
+		width: 83%;
+		float: left;
+
+		font-family: Nanum Gothic;
+	}
+	.localHotplaceTitle{
+		width: 13%;
+		color:white;
+		font-size: 25px;
+		float: right;
+		margin-top: 50px;
+		margin-left: 50px;
+		font-family: Nanum Gothic;
+	}
+	.card img{
+		margin-top: 30px;
+	}
+	.cardBackground{
+		background-color: #9dc3e6;
+		border: none;
+	}
+	.localHotplaceParking{
+		color: blue;
+	}
+	.news{
+		width: 80%;
+		height: auto;
+		padding: 10px;
+		margin:auto auto 50px auto;
+	}
+
+	@media print {
+		page-divide {
+			page-break-after: always;
+		}
+
+		.no-print-page {
+			display: none;
+		}
+	}

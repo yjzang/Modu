@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user">
+	
+	<select id="loginUser" parameterType="int" resultType="com.modu.vo.ModuUserVo">
+		<![CDATA[
+		select *
+		from user_tbl
+		where userno=#{userNo}
+		]]>
+	</select>
+
+	<select id="loginGroup" parameterType="int" resultType="com.modu.vo.ModuGroupVo">
+		<![CDATA[
+		select *
+		from group_tbl
+		where manager=#{userNo}
+		]]>
+	</select>
+
+	<insert id="joinUser" parameterType="com.modu.vo.ModuUserVo">
+		insert into USER_TBL values (SEQ_USERNO.nextval,#{userEmail},#{userPassword},#{userName},#{userBirthday})
+	</insert>
+
+	<select id="emailCheckAjax" parameterType="String" resultType="int">
+		select count(*) from USER_TBL where useremail = #{userEmail}
+	</select>
+	<select id="userLoginAvailableCheck" parameterType="map" resultType="com.modu.vo.ModuUserVo">
+		<![CDATA[	select USERNO,USEREMAIL,USERNAME,USERBIRTHDAY from USER_TBL where USEREMAIL=#{userEmail} and USERPASSWORD=#{userPassword}
+	]]>
+	</select>
+	<select id="loginUserGroupNo" parameterType="com.modu.vo.ModuUserVo" resultType="String">
+		select groupNo
+from (select groupno,ROWNUM rnum from  USER_GROUP_TBL where USERNO=#{userNo})
+where rnum=1
+	</select>
+	
+</mapper>
