@@ -107,7 +107,8 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public String addPost( @ModelAttribute BoardVo boardVo,
+	public String addPost(  @PathVariable("groupNo") String groupNo,
+			                @ModelAttribute BoardVo boardVo,
 							@RequestParam("files") MultipartFile[] files ,
 							@ModelAttribute FileVo fileVo,
 							Model model) {
@@ -132,7 +133,7 @@ public class BoardController {
 
 	
 		
-		return "redirect:/board";
+		return "redirect:/board/"+groupNo;
 		
 		
 	}
@@ -144,9 +145,9 @@ public class BoardController {
 		ModuUserVo authVo = (ModuUserVo)session.getAttribute("authUser");
 		String userNo = String.valueOf(authVo.getUserNo());
 		boardVo.setUserNo(userNo);
-		System.out.println("왓썹맨~"+boardVo.toString());
-		int flag = service.addCmt(boardVo);
-		return flag;
+		System.out.println("댓글~"+boardVo.toString());
+		int cmtCount = service.addCmt(boardVo);
+		return cmtCount;
 
 	}
 
@@ -177,10 +178,10 @@ public class BoardController {
 	
 	@ResponseBody
 	@RequestMapping(value="/delCmt", method=RequestMethod.POST)
-	public int deleteCmt(@RequestParam String commentNo){
+	public int deleteCmt(@ModelAttribute BoardVo boardVo){
 
-		int flag = service.deleteCmt(commentNo);
-		return flag;
+		int cmtCount = service.deleteCmt(boardVo);
+		return cmtCount;
 	}
 
 

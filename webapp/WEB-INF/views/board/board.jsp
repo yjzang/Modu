@@ -94,9 +94,9 @@
 
 							<form enctype="multipart/form-data" >
 								<div class="form-group p-2" style="position: relative;">
-									<input type="file" class="custom-file-input" id="boardUpload"  multiple="true" onchange="loadFile(event);">
+									<input type="file" class="custom-file-input" id="boardUpload"  multiple="multiple" onchange="loadFile(event);">
 									<label class="custom-file-label text-center pr-5" for="inputGroupFile04">이미지 업로드 &emsp;</label>
-									<img id="addImg"  src="" class="w-100 mx-auto mt-3">
+									<div class="rounded col-2" style="float : left"><img id="addImg"  src="" class="w-100 mx-auto mt-3"></div>
 								</div>
 							</form>
 
@@ -327,7 +327,7 @@
 			  str+= "	   		  </div>";
 			  str+= "		</div>";
 			  str+= "		<div class='text-left my-3'><span>";
-			  str+= "			                       <span class='ml-3' style='color:gray;'>  댓글 "+vo.cmtCount+"개</span></div>";
+			  str+= "			                       <span id='cmtCount_"+vo.boardNo+"' class='ml-3' style='color:gray;'>  댓글 "+vo.cmtCount+"개</span></div>";
  			  str+= "	    	 <div id='cmtList_"+vo.boardNo+"' style=' overflow-x:hidden; overflow-y:auto;  max-height:720px;'>";
 			  
 			  str+= "	    	 </div>";
@@ -366,13 +366,14 @@
 				dataType : "json",
 				
 				
-				success : function(flag){
+				success : function(cmtCount){
 					
-					if(flag==1){
+					if(cmtCount!=-1){
 						
 						$("#cmtList_"+boardNo).empty();
 						$("#commentContent_"+boardNo).val("");
 						fetchComment(boardNo);
+						$("#cmtCount_"+boardNo).text("댓글 " +cmtCount+"개");
 					
 					}
 					
@@ -634,16 +635,17 @@
 				  
 				  url : "${pageContext.request.contextPath}/board/${authUser.groupNo}/delCmt",
 				  type : "POST",
-				  data : {commentNo: commentNo},
+				  data : {commentNo: commentNo, boardNo: boardNo},
 				  dataType : "json",	
 				
-				  success : function(flag){
+				  success : function(cmtCount){
 						 
-						if(flag==1){
+						if(cmtCount!=-1){
 							
 							  alert("삭제되었습니다.");
 							  $("#cmtList_"+boardNo).empty();
 							  fetchComment(boardNo);
+							  $("#cmtCount_"+boardNo).text("댓글 " +cmtCount+"개");
 							  $("#deleteCmtModal").modal('hide');
 						
 						}
@@ -686,12 +688,11 @@
 		var loadFile = function(event) {
 			var addImg = document.getElementById('addImg');
 			addImg.src = URL.createObjectURL(event.target.files[0]);
-
-			var fileName = $("#boardUpload").val();
-			alert(fileName);
-
+			
+			var fileName = event.target.files[0].name;
+			 
 			fileName = fileName.slice(fileName.indexOf(".") + 1).toLowerCase();
-			console.log(fileName);
+			
 			if(fileName != "jpg" && fileName != "png" &&  fileName != "gif" &&  fileName != "bmp"){
 
 				alert("이미지 파일은 (jpg, png, gif, bmp) 형식만 등록 가능합니다.");
