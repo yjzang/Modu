@@ -72,7 +72,7 @@ table {
 		
 		<!----------------- 가계부 테이블------------------->
 		<div class="table-responsive">
-			<input type="text" id="groupNo" value="${gvo.groupNo}">
+			<input type="hidden" id="groupNo" value="${gvo.groupNo}">
 			<table class="table table-striped table-sm">
 				<thead>
 					<tr>

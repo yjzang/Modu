@@ -17,12 +17,13 @@ import com.modu.vo.ModuGroupVo;
 import com.modu.vo.ModuUserVo;
 
 @Controller
+@RequestMapping(value="/groupmain/{groupNo}")
 public class GroupMainController {
 
 	@Autowired
 	private ModuGroupService groupService;
 
-    @RequestMapping(value = "/groupmain/{groupNo}",method = RequestMethod.GET)
+    @RequestMapping("")
     public String GroupMain(Model model, HttpSession session,@PathVariable int groupNo){
         System.out.println("모임메인");
 
@@ -45,7 +46,7 @@ public class GroupMainController {
 		if(uservo != null) {
 			List<ModuGroupVo> gList  = groupService.selectGroup(uservo.getUserNo());
 			model.addAttribute("gList",gList);
-			}
+		}
 
 		List<ModuGroupVo> searchList = groupService.searchGroup(gSearch);
 		model.addAttribute("searchList",searchList);

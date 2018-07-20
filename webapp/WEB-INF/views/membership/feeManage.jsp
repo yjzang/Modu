@@ -32,7 +32,7 @@
 
 			<div class="pt-3">
 				<button class="interval float-left btn btn" type="text" value="" style="color: black" disabled="disabled">납부일: X개월 마다 10일</button>
-				<button type="button" class="btn btn-secondary float-right mr-3" onclick="location.href='/Modu/membershipsetting?groupNo=${gvo.groupNo}'">회비 설정하기</button>
+				<button type="button" class="btn btn-secondary float-right mr-3" onclick="location.href='/Modu/membershipfee/${gvo.groupNo}/membershipsetting'">회비 설정하기</button>
 				<div style="clear:both;"></div>
 			</div>
 

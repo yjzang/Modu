@@ -24,7 +24,7 @@
 
 		<c:if test="${authUser ne null}">
 			<%--모임 검색창--%>
-			<form class="form-inline mt-3" method="post" action="${pageContext.request.contextPath }/groupSearch">
+			<form class="form-inline mt-3" method="post" action="${pageContext.request.contextPath}/groupmain/${gvo.groupNo}}/groupSearch">	
 				<input class="form-control mr-sm-1 searchForm " id="searchbox" name="gSearch"
 					style="border-bottom-width: 2px; border-color: #0070c0; width: 300px;"
 					type="text" placeholder="모임을 검색하세요" aria-label="search">
