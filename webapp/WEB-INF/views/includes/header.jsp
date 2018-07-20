@@ -115,7 +115,7 @@
 							    <a class="nav-link"  href="${pageContext.request.contextPath }/groupmain" style="font-size: 3px">${gvo.groupName }</a>
 							</div>
 						</li>	 --%>
-							<div class="btn-group active ml-0">
+							<div class="btn-group active ml-0 dropdown">
 								<div style="width:200px;  overflow:hidden; text-overflow:ellipsis; height: 50px;">
 									<c:if test="${gvo.groupImg==null}" >
 										<img src="${pageContext.request.contextPath }/assets/images/groupImg00.png"
@@ -137,7 +137,7 @@
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 									<c:forEach items="${gList }" var="gro">
 										<a class="dropdown-item" href="${pageContext.request.contextPath }/groupmain/${gro.groupNo}"
-										style=" font-size: 20px ; ">
+										style=" font-size: 20px ;">
 										<img src="${pageContext.request.contextPath }/upload/${gro.groupImg}"
 											alt="" style="max-height: 50px; max-width: 50px;">
 											&nbsp; ${gro.groupName}</a>

@@ -99,8 +99,28 @@ public class BoardService {
 	public int addCmt(BoardVo boardVo) {
 		
 		int flag=dao.addCmt(boardVo);
-		return flag;
+		if(flag==1) {
+			int cmtCount = dao.cmtCount(boardVo.getBoardNo());
+			return cmtCount;
+		} else {
+			int cmtCount=-1;
+			return cmtCount;
+		}
 	}
+	
+	public int deleteCmt(BoardVo boardVo) {
+		
+		int flag = dao.deleteCmt(boardVo.getCommentNo());
+		if(flag==1) {
+			int cmtCount = dao.cmtCount(boardVo.getBoardNo());
+			return cmtCount;
+		} else {
+			int cmtCount=-1;
+			return cmtCount;
+		}
+		
+	}
+	
 	
 	
 	public int postCheck() {
@@ -144,13 +164,7 @@ public class BoardService {
 		return flag;
 	}
 	
-	public int deleteCmt(String commentNo) {
-		
-		int flag = dao.deleteCmt(commentNo);
-		return flag;
-		
-	}
-	
+
 	public BoardVo updateLike(BoardVo boardVo) {
 		
 
