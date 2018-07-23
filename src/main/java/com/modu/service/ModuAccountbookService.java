@@ -249,7 +249,7 @@ public class ModuAccountbookService {
 	}
 	
 	@Transactional
-	public void insertTag(String accountbookNo,String tagname) {
+	public AccountbookTagVo insertTag(String accountbookNo,String tagname) {
 		AccountbookTagVo accountbookTagVo = new AccountbookTagVo();
 		
 		accountbookTagVo.setAccountbookno(Integer.parseInt(accountbookNo));
@@ -266,6 +266,8 @@ public class ModuAccountbookService {
 		tempTag.setAccountbookno(accountbookno);	
 		
 		moduAccountbookDao.connectTag(tempTag);
+		
+		return tempTag;
 	}
 	
 	@Transactional
@@ -295,6 +297,7 @@ public class ModuAccountbookService {
 		accountbookTagVo.setAccountbooktagno(Integer.parseInt(accountbooktagno));
 		accountbookTagVo.setTagno(Integer.parseInt(tagno));
 		moduAccountbookDao.tagDelete(accountbookTagVo);
+		moduAccountbookDao.tagCleaner();
 	}
 	
 	public List<AccountbookCategoryVo> getCategoryList(String groupno) {

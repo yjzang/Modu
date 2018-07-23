@@ -81,7 +81,7 @@ public class ModuAccountbookDao {
 		return accountbookVo;
 	}
 	
-	public AccountbookVo saveAccountbookIncome(AccountbookVo accountbookVo) {
+	public AccountbookVo saveAccountbookIncome(AccountbookVo accountbookVo) {	
 		sqlSession.insert("accountbook.saveAccountbookIncome",accountbookVo);
 		return accountbookVo;
 	}
@@ -92,6 +92,10 @@ public class ModuAccountbookDao {
 	
 	public void deleteTag(Map map) {
 		sqlSession.delete("accountbook.deleteTag",map);
+	}
+	
+	public void tagCleaner() {
+		sqlSession.delete("accountbook.tagCleaner");
 	}
 	
 	public void deleteaccountbook(Map map) {

@@ -79,7 +79,7 @@ public class AccountBookController {
 	public int saveaccountbook(
 			@RequestParam( value="usage", required=false, defaultValue="사용내역") String usage,
 			@RequestParam( value="spend", required=false, defaultValue="0") String spend,
-			@RequestParam( value="category", required=false, defaultValue="1") String category,
+			@RequestParam( value="category", required=false, defaultValue="0") String category,
 			@PathVariable("groupNo") String groupNo,
 			@RequestParam("date") String date,
 			@RequestParam("spendFlag") String spendFlag){
@@ -121,8 +121,8 @@ public class AccountBookController {
 	
 	@ResponseBody
 	@RequestMapping( "/inserttag")
-	public void insertTag(@RequestParam("accountbookNo") String accountbookNo, @RequestParam("tagname") String tagname){	
-		moduAccountbookService.insertTag(accountbookNo,tagname);
+	public AccountbookTagVo insertTag(@RequestParam("accountbookNo") String accountbookNo, @RequestParam("tagname") String tagname){	
+		return moduAccountbookService.insertTag(accountbookNo,tagname);
 	}
 	
 	@ResponseBody
