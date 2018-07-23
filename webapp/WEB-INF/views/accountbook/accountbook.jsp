@@ -67,7 +67,6 @@ table {
 		<div class="float-right">
 			<button id="spendBtn" type="button" class="btn btn-primary">수입</button>
 			<button id="hiddenGraph" type="button" class="btn btn-primary">그래프 숨기기</button>
-			<button id="categoryUpdate" type="button" class="btn btn-primary">카테고리 수정</button>
 		</div>
 		
 		<!----------------- 가계부 테이블------------------->
@@ -98,16 +97,16 @@ table {
 		</div>
 
 		<!----------------- 태그 버튼------------------->
-		<div>
-			<button id="tagGroup" type="button" class="btn btn-primary float-left">#태그</button>
+		<div class="float-left">
+			<button id="tagGroup" type="button" class="btn btn-primary">#태그</button>	
+			<button id="categoryUpdate" type="button" class="btn btn-primary">카테고리 수정</button>
+			<button id="alignBtn" type="button" class="btn btn-primary">정렬</button>
 		</div>
 
 		<!----------------- CRUD 버튼------------------->
 		<div class="float-right">
 			<button type="button" class="btn btn-primary">글쓰기</button>
-			&nbsp;
 			<button id="deleteAccountbook" type="button" class="btn btn-danger">삭제하기</button>
-			&nbsp;
 		</div>
 		<br> <br>
 	</div>
@@ -189,6 +188,7 @@ table {
 	<script type="text/javascript" src="${pageContext.request.contextPath }/assets/js/locales/bootstrap-datetimepicker.ko.js" charset="UTF-8"></script>
 
 	<script>
+	
 		$(document).ready( function() {		
     
 			//내비바 가계부 탭 활성화
@@ -329,6 +329,15 @@ table {
 				}		
 			});
 			
+			$('#alignBtn').on('click',function(){
+				var mode = $("#searchMode").val()
+				if(mode != 1 && mode != 2 && mode != 3){
+					fetchAccountbookList();
+				}else{
+					searching()
+				}
+			});
+			
 			//최상단 체크박스 클릭시 체크박스 전체 선택 / 전체 해제
 			$("#checkAll").click(function() {
 				//클릭되었으면
@@ -367,11 +376,12 @@ table {
 			
 			//오늘 날짜 불러와서 달력에 입력
 			var today = new Date();
-			var year = today.getFullYear();
-			var month = '' + (today.getMonth() + 1);
-			if (month.length < 2) {
-				month = "0" + month;
-			}
+				var year = today.getFullYear();
+				var month = '' + (today.getMonth() + 1);
+				if (month.length < 2) {
+					month = "0" + month;
+				}
+			
 			$('#monthCal').val(year + " / " + month);
 
 			//append시 datepicker 이벤트 먹지 않는 문제 발생 - datepicker 이벤트 제거후 재 실행
@@ -514,7 +524,7 @@ table {
 						for (var i = 0; i < accountbookList.length; i++) {
 							render(accountbookList[i], i, categoryList);
 						}
-						newline(i, categoryList);
+						newLine(i, categoryList);
 
 						MyChart(chartDataList);
 					},
@@ -532,25 +542,25 @@ table {
 				str += "<tr id='" + accountbookVo.accountbookno + "' class='form-group'>";
 				str += "<td>" 								
 				str += "<div class='custom-control custom-checkbox'>";
-				str += "<input type='checkbox' class='custom-control-input data" + i + "' id='customCheck" + i + "' name='chk'>";
+				str += "<input type='checkbox' class='custom-control-input data" + i + "' id='customCheck" + i + "' tabindex='-1' name='chk'>";
 				str += "<label class='custom-control-label'  for='customCheck" + i + "' style='margin-top: 7px'>&nbsp;</label>";
 				str += "</div>";
 				str += "</td>"
 				str += "<td>"
-				str += "<input type='text' id='date" + i + "' readonly='readonly' class='datepicker form-control text-center date' value='" + accountbookVo.accountbookRegDate + "' style='margin-top:7px' placeholder='날짜'>";
+				str += "<input type='text' id='date" + i + "' readonly='readonly' class='date datepicker form-control text-center' value='" + accountbookVo.accountbookRegDate + "' style='margin-top:7px' tabindex='-1' placeholder='날짜'>";
 				str += "</td>";
 				str += "<td>";
-				str += "<input type='text' class='form-control text-center usage' style='margin-top: 7px' id='usage" + i + "' value='" + accountbookVo.accountbookUsage + "' placeholder='사용내역'>";
+				str += "<input type='text' class='usage form-control text-center' style='margin-top: 7px' id='usage" + i + "' value='" + accountbookVo.accountbookUsage + "' placeholder='사용내역'>";
 				str += "</td>";
 				str += "<td>";
 				if (spendFlag == 'spend'){
-					str += "<input type='text' class='form-control text-center spend' style='margin-top: 7px' id='spend" + i + "' value='" + accountbookVo.accountbookSpend + "' placeholder='지출액'>";
+					str += "<input type='text' class='spend form-control text-center' style='margin-top: 7px' id='spend" + i + "' value='" + accountbookVo.accountbookSpend + "' placeholder='지출액'>";
 				}else{
-					str += "<input type='text' class='form-control text-center spend' style='margin-top: 7px' id='spend" + i + "' value='" + accountbookVo.accountbookIncome + "' placeholder='수입액'>";
+					str += "<input type='text' class='spend form-control text-center' style='margin-top: 7px' id='spend" + i + "' value='" + accountbookVo.accountbookIncome + "' placeholder='수입액'>";
 				}
 				str += "</td>";
 				str += "<td>";
-				str += "<select class='form-control custom-select text-center category' style='margin-top: 7px' id='category" + i + "'>";
+				str += "<select class='category form-control custom-select text-center' style='margin-top: 7px' id='category" + i + "'>";
 				str += "<option value='' selected>분류</option>";
 
 				for (var i = 0; i < categoryList.length; i++) {
@@ -570,7 +580,7 @@ table {
 				str += "<td>";
 				if (accountbookVo.tagName == (" "))
 					accountbookVo.tagName = "";
-				str += "<input type='text' class='tag form-control text-center' style='margin-top: 7px' id='tag" + i + "' value='" + accountbookVo.tagName + "' placeholder='태그'>";
+				str += "<input type='text' class='tag form-control text-center' style='margin-top: 7px' id='tag" + i + "' value='" + accountbookVo.tagName + "' tabindex='-1' placeholder='태그'>";
 				str += "<td>";
 				str += "</tr>";
 
@@ -580,7 +590,7 @@ table {
 			}
 
 			//마지막칸 새로운 라인 추가
-			function newline(i, categoryList) {
+			function newLine(i, categoryList) {
 				
 				var mode = $("#searchMode").val();
 				
@@ -590,25 +600,25 @@ table {
 					str += "<tr id='' name='" + i + "'class='form-group'>";
 					str += "<td>";
 					str += "<div class='custom-control custom-checkbox'>";
-					str += "<input type='checkbox' class='custom-control-input data" + i + "' id='customCheck" + i + "' name='chk'>";
+					str += "<input type='checkbox' class='custom-control-input' id='customCheck" + i + "' tabindex='-1' name='chk'>";
 					str += "<label class='custom-control-label'  for='customCheck" + i + "' style='margin-top: 7px'>&nbsp;</label>";
 					str += "</div>";
 					str += "</td>"
 					str += "<td>"
-					str += "<input type='text' id='date" + i + "' readonly='readonly' class='date datepicker form-control text-center data" + i + "' value='' style='margin-top:7px' placeholder='날짜'>";
+					str += "<input type='text' id='date" + i + "' readonly='readonly' class='date datepicker form-control text-center data" + i + "' value='' style='margin-top:7px' tabindex='-1' placeholder='날짜'>";
 					str += "</td>";
 					str += "<td>";
-					str += "<input type='text' class='usage form-control text-center data" + i + "' style='margin-top: 7px' id='usage" + i + "' value='' placeholder='사용내역'>";
+					str += "<input type='text' class='usage form-control text-center' style='margin-top: 7px' id='usage" + i + "' value='' placeholder='사용내역'>";
 					str += "</td>";
 					str += "<td>";
 					if (spendFlag == 'spend'){
-						str += "<input type='text' class='spend form-control text-center data" +i + "' style='margin-top: 7px' id='spend" + i + "' value='' placeholder='지출액'>";
+						str += "<input type='text' class='spend form-control text-center' style='margin-top: 7px' id='spend" + i + "' value='' placeholder='지출액'>";
 					}else{
-						str += "<input type='text' class='spend form-control text-center data" +i + "' style='margin-top: 7px' id='spend" + i + "' value='' placeholder='수입액'>";
+						str += "<input type='text' class='spend form-control text-center' style='margin-top: 7px' id='spend" + i + "' value='' placeholder='수입액'>";
 					}
 					str += "</td>";
 					str += "<td>";
-					str += "<select class='category form-control custom-select text-center data" + i + "' style='margin-top: 7px' id='category" + i + "'>";
+					str += "<select class='category form-control custom-select text-center' style='margin-top: 7px' id='category" + i + "'>";
 					str += "<option value='' selected>분류</option>";
 
 					for (var i = 0; i < categoryList.length; i++) {
@@ -620,7 +630,7 @@ table {
 					str += "</select>";
 					str += "</td>";
 					str += "<td>";
-					str += "<input type='text' class='tag form-control text-center data" + i + "' style='margin-top: 7px' id='tag" + i + "' value='' placeholder='태그'>";
+					str += "<input type='text' class='tag form-control text-center data" + i + "' style='margin-top: 7px' id='tag" + i + "' value='' tabindex='-1' placeholder='태그'>";
 					str += "<td>";
 					str += "</tr>";
 
@@ -641,7 +651,14 @@ table {
 					}else if( $(this).find(".spend").val() != '' ){
 						var id = $(this).closest("tr").attr("id",0);
 						var spend = $(this).find(".spend").val();
-						$(this).closest("tr").attr("id",saveAccountbook('',spend,'',date));
+						var regexp = /^[0-9]*$/;
+						
+						if( !regexp.test(spend) ) {
+							alert("숫자만 입력하세요");
+							$(this).find(".spend").val('');
+						}else{
+							$(this).closest("tr").attr("id",saveAccountbook('',spend,'',date));
+						}
 					}else if( $(this).find(".category").val() != '' ){
 						var id = $(this).closest("tr").attr("id",0);
 						var category = $(this).find(".category").val();
@@ -666,8 +683,8 @@ table {
 					},
 					//dataType : "json", 
 					async: false,
-					success : function(accountbookno) {									
-						accNo = accountbookno;
+					success : function(accountbookNo) {									
+						accNo = accountbookNo;
 					},
 					error : function(XHR, status, error) {
 						console.error(status + " : " + error);
@@ -695,36 +712,41 @@ table {
 
 					var row = parseInt($this.attr("name")) + 1;
 									
-					newline(row,globalCategoryList);
+					newLine(row,globalCategoryList);
 				}else{
 					var updatePos;
-					var accountbookno;
+					var accountbookNo;
 					$(this).find(".usage").change(function(){
-						accountbookno = $(this).closest("tr").attr("id");
+						accountbookNo = $(this).closest("tr").attr("id");
 						data = $(this).val();
 						updatePos='accountbookusage';
-						updateAccountbook(accountbookno,data,updatePos);
+						updateAccountbook(accountbookNo,data,updatePos);
 					})
 					
 					$(this).find(".date").change(function(){
-						accountbookno = $(this).closest("tr").attr("id");
+						accountbookNo = $(this).closest("tr").attr("id");
 						data = $(this).val();
 						updatePos='accountbookregdate';
-						updateAccountbook(accountbookno,data,updatePos);
+						updateAccountbook(accountbookNo,data,updatePos);
 					}) 
 					
 					$(this).find(".spend").change(function(){
-						accountbookno = $(this).closest("tr").attr("id");
+						accountbookNo = $(this).closest("tr").attr("id");
 						data = $(this).val();
 						updatePos='accountbookspend';
-						updateAccountbook(accountbookno,data,updatePos);
+						var regexp = /^[0-9]*$/
+						if( !regexp.test(data) ) {
+							alert("숫자만 입력하세요");
+						}else{
+							updateAccountbook(accountbookNo,data,updatePos);
+						}	
 					})
 					
 					$(this).find(".category").change(function(){
-						accountbookno = $(this).closest("tr").attr("id");
+						accountbookNo = $(this).closest("tr").attr("id");
 						data = $(this).val();
 						updatePos='categoryno';
-						updateAccountbook(accountbookno,data,updatePos);
+						updateAccountbook(accountbookNo,data,updatePos);
 					})
 				}
 
@@ -789,7 +811,7 @@ table {
 				$('#inputTagsName').val('');
 				$('#tagBundleModal').modal();
 				$('#eachTagModal').modal('hide');
-				$('#moda2').modal('hide');		
+				$('#modal2').modal('hide');		
 			});
 			
 			//태그 저장 버튼 클릭시 체크된 항목 태그 일괄 적용	

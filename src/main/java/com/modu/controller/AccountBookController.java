@@ -48,6 +48,23 @@ public class AccountBookController {
 		return "/accountbook/accountbook";
 	}
 	
+	@RequestMapping("/{date}")
+	public String accountbook(@PathVariable("groupNo") String groupNo,Model model, HttpSession session, @PathVariable("date") String date){
+
+		// 모임 카테고리
+	      ModuUserVo uservo =  (ModuUserVo) session.getAttribute("authUser");
+	      List<ModuGroupVo> gList  = groupService.selectGroup(uservo.getUserNo());
+	      model.addAttribute("gList",gList);
+
+	      // 클릭한 모임  가계부 보여주기
+	      ModuGroupVo gvo = groupService.selectGroupImg(Integer.parseInt(groupNo));
+	      model.addAttribute("gvo",gvo);
+	      
+	      model.addAttribute("date",date);
+
+		return "/accountbook/accountbook";
+	}
+	
 	@ResponseBody
 	@RequestMapping( "/getaccountlist")
 	public Map<String,Object> getAccountList(@RequestParam("month") String month,
