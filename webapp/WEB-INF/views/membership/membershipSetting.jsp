@@ -203,7 +203,7 @@
   </li>
 </div>
 <div>
-  <button type="button" class="btn btn-secondary btn-lg mt-5" onclick="location.href='${pageContext.request.contextPath }/feemanage?groupNo=${gvo.groupNo }'">&ensp;&ensp;설정하기&ensp;&ensp;</button>
+  <button type="button" class="btn btn-secondary btn-lg mt-5" onclick="location.href='${pageContext.request.contextPath }/membershipfee/${gvo.groupNo}/feemanage'">&ensp;&ensp;설정하기&ensp;&ensp;</button>
 </div>
 </form>
 </center>

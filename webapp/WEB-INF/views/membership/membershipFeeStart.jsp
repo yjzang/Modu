@@ -25,7 +25,7 @@
                 <h1 class="ml-4">회비설정을 </h1>
                 <h1 class="mb-5">안하셨나요?</h1>
             </div>
-				<a class="btn btn-primary btn-lg ml-5 mt-0" style="text-shadow:none; " href="${pageContext.request.contextPath }/membershipsetting?groupNo=${gvo.groupNo}">회비설정하기</a>
+				<a class="btn btn-primary btn-lg ml-5 mt-0" style="text-shadow:none; " href="${pageContext.request.contextPath }/membershipfee/${gvo.groupNo}/membershipsetting">회비설정하기</a>
 				<br>
 			</div>
                <img class="d-block w-100" src="${pageContext.request.contextPath }/assets/images/membership3.jpg" alt="membershipsetting">

@@ -63,7 +63,7 @@
 	          <span aria-hidden="true">&times;</span>
 	        </button>
 	      </div>
-	      <form id="group-join-form" name="gJoinForm" method="post"action="${pageContext.request.contextPath }/joinGroup">
+	      <form id="group-join-form" name="gJoinForm" method="post"action="${pageContext.request.contextPath }/groupmanage/${gvo.groupNo}}/joinGroup">
 			<div class="form-group text-center mx-5 introduce">
 			    <label for="introduce">가입 신청 메세지</label>
 			    <textarea class="form-control" id="introduce" rows="3" name="joinMessage" placeholder="글을 입력해주세요."></textarea>
