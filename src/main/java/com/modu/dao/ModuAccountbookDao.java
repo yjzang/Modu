@@ -126,7 +126,8 @@ public class ModuAccountbookDao {
 		sqlSession.update("accountbook.categoryUpdate",map);
 	}
 	
-	public void categoryInsert(Map map) {
-		sqlSession.insert("accountbook.categoryInsert",map);
+	public AccountbookCategoryVo categoryInsert(AccountbookCategoryVo categoryVo) {
+		sqlSession.insert("accountbook.categoryInsert",categoryVo);
+		return categoryVo;
 	}
 }

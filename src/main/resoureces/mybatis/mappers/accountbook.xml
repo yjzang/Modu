@@ -8,7 +8,7 @@
 		
 		select accountbookno,accountbookusage,accountbookspend,accountbookincome,categoryno,groupno,memberfeeno,to_char(accountbookregdate,'yyyy"년" mm"월" dd"일"') accountbookregdate
 		from accountbook_tbl
-		where groupno=1 and accountbookregdate between '18/07/01' and '18/07/30'
+		where groupno=#{groupNo} and accountbookregdate between #{startDate} and #{endDate}
 		]]>
 		<if test="spendFlag == 'spend'">
 		    and accountbookincome is null
@@ -366,11 +366,14 @@
 		]]>
 	</update>
 	
-	<insert id="categoryInsert" parameterType="map">	
+	<insert id="categoryInsert" parameterType="com.modu.vo.AccountbookCategoryVo">	
+		<selectKey keyProperty="categoryNo" resultType="int" order="BEFORE">	
+			select seq_categoryno.nextval from dual
+		</selectKey>
 		<![CDATA[
 			insert into category_tbl(categoryno,categoryname,groupNo) 
-			values(seq_categoryno.nextval
-			,#{categoryname}
+			values(#{categoryNo}
+			,#{categoryName}
             ,#{groupNo})
 		]]>
 	</insert>

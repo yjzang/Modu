@@ -318,10 +318,12 @@ public class ModuAccountbookService {
 		moduAccountbookDao.categoryUpdate(map);
 	}
 	
-	public void categoryInsert(String groupNo, String categoryname) {
-		Map<String,String> map = new HashMap<String,String>();
-		map.put("groupNo", groupNo);
-		map.put("categoryname", categoryname);	
-		moduAccountbookDao.categoryInsert(map);
+	public int categoryInsert(String groupNo, String categoryname) {
+		AccountbookCategoryVo categoryVo = new AccountbookCategoryVo();
+		categoryVo.setCategoryName(categoryname);
+		categoryVo.setGroupNo(Integer.parseInt(groupNo));
+		moduAccountbookDao.categoryInsert(categoryVo);
+		System.out.println(categoryVo.getCategoryNo());
+		return categoryVo.getCategoryNo();
 	}
 }

@@ -48,8 +48,8 @@ public class AccountBookController {
 		return "/accountbook/accountbook";
 	}
 	
-	@RequestMapping("/{date}")
-	public String accountbook(@PathVariable("groupNo") String groupNo,Model model, HttpSession session, @PathVariable("date") String date){
+	@RequestMapping("/{urlDate}")
+	public String accountbook(@PathVariable("groupNo") String groupNo,Model model, HttpSession session, @PathVariable("urlDate") String urlDate){
 
 		// 모임 카테고리
 	      ModuUserVo uservo =  (ModuUserVo) session.getAttribute("authUser");
@@ -60,7 +60,10 @@ public class AccountBookController {
 	      ModuGroupVo gvo = groupService.selectGroupImg(Integer.parseInt(groupNo));
 	      model.addAttribute("gvo",gvo);
 	      
-	      model.addAttribute("date",date);
+	      String yy = urlDate.substring(0, 4);
+	      String mm = urlDate.substring(6, 8);
+	      
+	      model.addAttribute("urlDate",yy + " / " + mm);
 
 		return "/accountbook/accountbook";
 	}
@@ -163,8 +166,8 @@ public class AccountBookController {
 	
 	@ResponseBody
 	@RequestMapping( "/insertcategory")
-	public void insertCategory(@PathVariable("groupNo") String groupNo,@RequestParam("categoryname") String categoryname){
-		moduAccountbookService.categoryInsert(groupNo,categoryname);
+	public int insertCategory(@PathVariable("groupNo") String groupNo,@RequestParam("categoryname") String categoryname){
+		return moduAccountbookService.categoryInsert(groupNo,categoryname);
 	}
 
 	///////////////////////////////////////로그인/////////////////////////////////////////////
