@@ -72,6 +72,7 @@ table {
 		<!----------------- 가계부 테이블------------------->
 		<div class="table-responsive">
 			<input type="hidden" id="groupNo" value="${gvo.groupNo}">
+			<input type="hidden" id="urlDate" value="${urlDate}">
 			<table class="table table-striped table-sm">
 				<thead>
 					<tr>
@@ -105,7 +106,7 @@ table {
 
 		<!----------------- CRUD 버튼------------------->
 		<div class="float-right">
-			<button type="button" class="btn btn-primary">글쓰기</button>
+			<button id="writeBoard" type="button" class="btn btn-primary">글쓰기</button>
 			<button id="deleteAccountbook" type="button" class="btn btn-danger">삭제하기</button>
 		</div>
 		<br> <br>
@@ -376,13 +377,18 @@ table {
 			
 			//오늘 날짜 불러와서 달력에 입력
 			var today = new Date();
+
+			var urlDate = $("#urlDate").val();
+			if(urlDate == ''){
 				var year = today.getFullYear();
 				var month = '' + (today.getMonth() + 1);
 				if (month.length < 2) {
 					month = "0" + month;
 				}
-			
-			$('#monthCal').val(year + " / " + month);
+				$('#monthCal').val(year + " / " + month);
+			}else {
+				$('#monthCal').val(urlDate);
+			}
 
 			//append시 datepicker 이벤트 먹지 않는 문제 발생 - datepicker 이벤트 제거후 재 실행
 			function datepickerReset() {
@@ -917,19 +923,25 @@ table {
 				
 				str+="<div class='my-1' id='" + tagList.accountbooktagno + "'>";
 				if(typeof(tagList.tagname) == 'undefined'){
-					str+="<input class='inputTag form-control mr-sm-2 ml-2 w-75 float-left' type='search' id='inputTag' name='' value='' placeholder='태그'>";
+					str+="<input class='inputTag form-control mr-sm-2 ml-2 w-50 float-left' type='search' id='inputTag' name='' value='' placeholder='태그'>";
 				}
 				else{
-					str+="<input class='inputTag form-control mr-sm-2 ml-2 w-75 float-left' type='search' id='inputTag' name='" + tagList.tagno + "' value='" + tagList.tagname + "'>";
+					str+="<input class='inputTag form-control mr-sm-2 ml-2 w-50 float-left' type='search' id='inputTag' name='" + tagList.tagno + "' value='" + tagList.tagname + "'>";
 				}
 				str+="<button type='button' name='tagDelete' class='btn btn-danger mr-1 float-left' id='" + tagList.tagno + "' value='" + tagRow + "' tabindex='-1'>삭제</button>";
+				str+="<button type='button' name='moveBoard' class='btn btn-primary mr-1 float-left' id='" + tagList.tagno + "' value='" + tagRow + "' tabindex='-1'>게시판 이동</button>";
 				str+="<div style='clear:both;''></div>";
 				str+="</div>";
 				
 				$("#tagBody").append(str);
 				
 				tagRow++;
-			}							
+			}	
+			
+			//태그 삭제
+			$("#tagBody").on("click","[name=moveBoard]",function() {
+				location.href = '${pageContext.request.contextPath }/accountbook/${gvo.groupNo}';	
+			});
 			
 			//태그 삭제
 			$("#tagBody").on("click","[name=tagDelete]",function() {
@@ -1006,8 +1018,13 @@ table {
 							$(this).next("[name=tagDelete]").attr("id",tagVo.tagno);
 						}
 					}
-
-				    $(".inputTag").eq(index).focus();
+					
+					if ($('.inputTag').index(this)+1 != $('#tagBody > div').last().index()+1){
+						$(".inputTag").eq(index).focus();
+					}else{
+						tagRowInsert('');
+						$(".inputTag").eq(index).focus();
+					}      
 				}
 			});	
 			
@@ -1108,7 +1125,7 @@ table {
 				else{
 					str+="<input class='inputCategory form-control mr-sm-2 ml-2 w-75 float-left' type='search' id='inputCategory' name='" + cateList.categoryNo + "' value='" + cateList.categoryName + "'>";
 				}
-				str+="<button type='button' name='categoryDelete' class='btn btn-danger mr-1 float-left' id='" + cateList.categoryNo + "' value='" + cateRow + "'>삭제</button>";
+				str+="<button type='button' name='categoryDelete' class='btn btn-danger mr-1 float-left' id='" + cateList.categoryNo + "' value='" + cateRow + "' tabindex='-1'>삭제</button>";
 				str+="<div style='clear:both;''></div>";
 				str+="</div>";
 				
@@ -1123,10 +1140,9 @@ table {
 			});
 			
 			//카테고리 삭제
-			$("#categoryBody").on("click","[name=categoryDelete]",function() {
-			
-				$(this).closest("div").remove();
+			$("#categoryBody").on("click","[name=categoryDelete]",function() {		
 				var categoryno = $(this).attr('id');
+				$(this).closest("div").remove();
 				categoryDelete(categoryno);
 				insertedTagRow--;
 				
@@ -1157,13 +1173,48 @@ table {
 				var categoryname = $(this).val();
 
 				var selRow = $(this).closest("div").index() + 1;
-				if(selRow <= insertedCateRow){
-					var categoryno = $(this).attr('name');
-					updateCategory(categoryno,categoryname);								
-				}else{
-					insertCategory(categoryname);					
+				
+				if(categoryname.trim() != ''){
+					if(selRow <= insertedCateRow){
+						var categoryno = $(this).attr('name');
+						updateCategory(categoryno,categoryname);								
+					}else{
+						categoryNo = insertCategory(categoryname);	
+						$(this).closest("div").attr("id",categoryNo);
+						$(this).attr('name',categoryNo);	
+						$(this).next("[name=categoryDelete]").attr("id",categoryNo);
+					}
 				}
+			});	
+			
+			//엔터키 입력시 카테고리 자동 포커스 전환
+			$("#categoryBody").on("keydown","#inputCategory",function() {			
+				if(event.keyCode == 13){
+					var index = $(".inputCategory").index(this) + 1;
+					
+					var categoryname = $(this).val();
 
+					var selRow = $(this).closest("div").index() + 1;
+					
+					if(categoryname.trim() != ''){
+						if(selRow <= insertedCateRow){
+							var categoryno = $(this).attr('name');
+							updateCategory(categoryno,categoryname);								
+						}else{
+							categoryNo = insertCategory(categoryname);	
+							$(this).closest("div").attr("id",categoryNo);
+							$(this).attr('name',categoryNo);	
+							$(this).next("[name=categoryDelete]").attr("id",categoryNo);
+						}
+					}
+					
+					if ($('.inputCategory').index(this)+1 != $('#categoryBody > div').last().index()+1){
+						$(".inputCategory").eq(index).focus();
+					}else{
+						cateRowInsert('');
+						$(".inputCategory").eq(index).focus();
+					}    
+				}
 			});	
 			
 			//카테고리 수정
@@ -1179,10 +1230,7 @@ table {
 					//dataType : "json",	
 					success : function() {
 						$("#accountbookContent").empty();
-						searching();	
-						$("#categoryBody").empty();
-						cateRow = 1;	
-						cateList();
+						searching();							
 					},
 					error : function(XHR, status, error) {
 						console.error(status + " : " + error);
@@ -1192,6 +1240,7 @@ table {
 			
 			//카테고리 삽입
 			function insertCategory(categoryname) {
+				var categoryNo;
 				$.ajax({
 					url : "${pageContext.request.contextPath }/accountbook/${gvo.groupNo}/insertcategory",
 					type : "post",
@@ -1199,19 +1248,27 @@ table {
 					data : {
 						categoryname : categoryname
 					},
-					//dataType : "json",	
-					success : function() {
+					async: false,
+					dataType : "json",	
+					success : function(categoryNum) {
 						$("#accountbookContent").empty();
 						searching();	
-						$("#categoryBody").empty();
-						cateRow = 1;	
-						cateList();
+						categoryNo = categoryNum;
 					},
 					error : function(XHR, status, error) {
 						console.error(status + " : " + error);
 					}
 				});
+				return categoryNo;
 			}
+			
+			$("#writeBoard").on("click",function(){
+				$('input:checkbox[name=chk]').each(function() {
+		        	if($(this).is(':checked')){
+		       			AccountbookList += ","+($(this).closest("tr").attr("id"));		
+		        	}
+		      	});
+			});
 			
 		});
 	</script>
