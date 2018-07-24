@@ -13,73 +13,70 @@ public class ReportDao {
     @Autowired
     SqlSession sqlSession;
 
-//    public int getRecentEvent(String groupNo) {
-//        return sqlSession.selectOne("report.getRecentEvent",groupNo);
-//    }
-//
-//    public ReportVo getMonthlyAnnualList(Map<String,Object> inputMap) {
-//        System.out.println("연간보고서 긁기");
-//        return sqlSession.selectOne("report.getMonthlyAnnualList",inputMap);
-//    }
-//
-//
-//    public String getCategoryName(Integer cateNo) {
-//        return sqlSession.selectOne("report.getCategoryName",cateNo);
-//    }
-//
-//    public String getAnnualSum(Map<String, Object> inputMap) {
-//        return sqlSession.selectOne("report.getAnnualSum",inputMap);
-//    }
-//
-//    public String getMonthlyIncome(Map<String, Object> inputMap) {
-//        return sqlSession.selectOne("report.getMonthlyIncome",inputMap);
-//    }
-//
-//    public String getMonthlySpend(Map<String, Object> inputMap) {
-//        return sqlSession.selectOne("report.getMonthlySpend",inputMap);
-//    }
-//
-//    public List<Integer> getTagList(Map<String,Object> inputMap) {
-//        return sqlSession.selectList("report.getTagList",inputMap);
-//    }
-//
-//    public int monthCheck(int tagNo) {
-//        return sqlSession.selectOne("report.monthCheck",tagNo);
-//    }
-//
-//    public ReportVo getMonthlyTagList(int tagNo) {
-//        return sqlSession.selectOne("report.monthlyTagList",tagNo);
-//    }
-//
-//    public int getMonthlyTagTotal(Map<String,Object> map) {
-//        return sqlSession.selectOne("report.monthlyTagTotal",map);
-//    }
-//
-//    public String getAnnualIncomeTotal(Map<String,Object> tmpMap) {
-//        return sqlSession.selectOne("report.annualIncomeTotal",tmpMap);
-//    }
-//
-//    public String getAnnualSpendTotal(Map<String,Object> tmpMap) {
-//        return sqlSession.selectOne("report.annualSpendTotal",tmpMap);
-//    }
-//
-//    public List<Integer> getAccountNoByTagList(int tagNo) {
-//        return sqlSession.selectList("report.getAccountNoByTagList",tagNo);
-//    }
-//
-//    public List<Integer> getAccountNoTotalList(Map<String,Object> inputMap) {
-//        return sqlSession.selectList("report.getAccountNoTotalList",inputMap);
-//    }
-//
-//    public ReportVo getNullList(int accountbookNo) {
-//        return sqlSession.selectOne("report.getNullList",accountbookNo);
-//    }
+
     public List<Integer> getCategory(int groupNo) {
         return sqlSession.selectList("report.getCategoryList",groupNo);
     }
 
+    public String getCategoryName(Integer cateNo) {
+        return sqlSession.selectOne("report.getCategoryName",cateNo);
+    }
 
     public ReportVo getReportByPeriod(Map<String,Object> inputMap) {
-        return sqlSession.selectOne("report.getReportByPeriod",inputMap);
+        ReportVo reportVo = null;
+        try{
+            reportVo = sqlSession.selectOne("report.getReportByPeriod",inputMap);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return reportVo;
+        }
+
     }
+
+    public String getMonthlyIncome(Map<String, Object> inputMap) {
+        return sqlSession.selectOne("report.getMonthlyIncome",inputMap);
+    }
+
+    public String getMonthlySpend(Map<String, Object> inputMap) {
+        return sqlSession.selectOne("report.getMonthlySpend",inputMap);
+    }
+
+    public String getMonthlyTotal(Map<String,Object> inputMap) {
+        return sqlSession.selectOne("report.getMonthlyTotal",inputMap);
+    }
+
+    public int getRecentTag(String groupNo) {
+        int tagNo = 0;
+        try{
+            tagNo = sqlSession.selectOne("report.getRecentTag",groupNo);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return tagNo;
+        }
+    }
+
+    public List<ReportVo> getTagList(int groupNo) {
+        List<ReportVo> list = sqlSession.selectList("report.getTagList",groupNo);
+        System.out.println(list.toString());
+        return list;
+    }
+
+    public List<ReportVo> getAccountbookListByTag(int tagNo) {
+        return sqlSession.selectList("report.getAccountbookListByTag",tagNo);
+    }
+
+    public List<Integer> getTagNoList(Map<String, Object> inputMap) {
+        return sqlSession.selectList("report.getTagNoList",inputMap);
+    }
+
+    public int postCount(int groupNo) {
+        return sqlSession.selectOne("report.getTotalCount",groupNo);
+    }
+
+    public ReportVo getTagListForPaging(int tagNo) {
+        return sqlSession.selectOne("report.getTagListForPaging",tagNo);
+    }
+
 }

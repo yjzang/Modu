@@ -54,56 +54,121 @@
             </div>
             <br>
             <br>
+            <c:if test="${!empty monthlySpend}">
+                <c:set var="periodTotalSpend" value="0"/>
+                <c:set var="periodTotalIncome" value="0"/>
+                <c:forEach var="i" items="${monthlySpend}">
+                    <c:set var="periodTotalSpend" value="${periodTotalSpend+i}"/>
+                </c:forEach>
+                <c:forEach var="i" items="${monthlyIncome}">
+                    <c:set var="periodTotalIncome" value="${periodTotalIncome+i}"/>
+                </c:forEach>
+            </c:if>
+            <table align="right" style="font-size: 25px;margin-right: 70px;">
+                <tr>
+                    <td>총 수입 :</td>
+                    <td style="color:blue;" align="center" id="periodTotalIncome"></td>
+                    <td>원</td>
+                </tr>
+                <tr>
+                    <td>총 지출 :</td>
+                    <td style="color:red;" align="center" id="periodTotalSpend"></td>
+                    <td>원</td>
+                </tr>
+            </table>
+            <div style="clear: both"></div>
+            <br>
+            <br>
             <div class="mx-auto" id="graph1" style="width: 90%; height: 500px;"></div>
             <div style="width: 1173px;">
-                <%--<span>${list.get(0).get(0).categoryName}</span>--%>
-                <table class="table" style="text-align: center; table-layout: fixed;" id="firstHalfTable">
-                    <thead>
-                    <%--for문으로 교체--%>
-                    <tr>
-                        <th scope="col" style="width: 127px;">#</th>
-                        <th scope="col">1월</th>
-                        <th scope="col">2월</th>
-                        <th scope="col">3월</th>
-                        <th scope="col">4월</th>
-                        <th scope="col">5월</th>
-                        <th scope="col">6월</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    <c:forEach var="item" items="${list}">
+                <c:if test="${!empty reportListByCategory}">
+                <c:if test="${reportListByCategory.get(0).size() > 9}">
+                <table class="table" style="text-align: center; table-layout: fixed; font-size: 13px;"
+                       id="firstHalfTable">
+                </c:if>
+                <c:if test="${reportListByCategory.get(0).size() < 10}">
+                <table class="table" style="text-align: center; table-layout: fixed;"
+                       id="firstHalfTable">
+                </c:if>
+                        <thead>
                         <tr>
-                            <td>${item.get(0).categoryName}</td>
-                            <c:forEach var="list" items="${item}" end="${list.size()-6}">
-                                <c:if test="${list.totalSpend eq 0 and list.monthNo ne 0}">
-                                    <td>+${list.totalIncome}</td>
+                            <th scope="col" style="width: 127px;"></th>
+                            <c:if test="${fromYear eq toYear}">
+                                <c:forEach var="month" begin="${fromMonth}" end="${toMonth}">
+                                    <th scope="col">${month}월</th>
+                                </c:forEach>
+                            </c:if>
+                            <c:if test="${fromYear ne toYear}">
+                                <c:forEach var="month" begin="${fromMonth}" end='12'>
+                                    <th scope="col">${month}월</th>
+                                </c:forEach>
+                                <c:forEach var="month" begin="1" end="${toMonth}" varStatus="mont">
+                                    <th scope="col">${mont.count}월</th>
+                                </c:forEach>
+                            </c:if>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="item" items="${reportListByCategory}" varStatus="index">
+                            <tr>
+                                <td>${item.get(0).categoryName}</td>
+                                <c:forEach var="list" items="${item}" varStatus="index2">
+                                    <c:if test="${list.totalSpend eq 0 and list.monthNo ne 0}">
+                                        <td id="data${index.index}${index2.index}">+${list.totalIncome}</td>
+                                    </c:if>
+                                    <c:if test="${list.totalIncome eq 0 and list.monthNo ne 0}">
+                                        <td id="data${index.index}${index2.index}">-${list.totalSpend}</td>
+                                    </c:if>
+                                    <c:if test="${list.totalIncome eq 0 and list.totalSpend eq 0}">
+                                        <td>0</td>
+                                    </c:if>
+                                </c:forEach>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                        <tfoot>
+                        <tr style="border-top: 2px black solid;">
+                            <th>수입</th>
+                                <%--for문--%>
+                            <c:forEach var="income" items="${monthlyIncome}" varStatus="index">
+                                <c:if test="${income gt 0}">
+                                    <td style="color:blue;" id="totalIncome${index.index}">+${income}</td>
                                 </c:if>
-                                <c:if test="${list.totalIncome eq 0 and list.monthNo ne 0}">
-                                    <td>-${list.totalSpend}</td>
-                                </c:if>
-                                <c:if test="${list.totalIncome eq 0 and list.totalSpend eq 0}">
-                                    <td>0</td>
+                                <c:if test="${income eq 0}">
+                                    <td>${income}</td>
                                 </c:if>
                             </c:forEach>
                         </tr>
-                    </c:forEach>
-
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <th>수입,지출<br>합계</th>
-                        <c:forEach var="firstHalf" items="${annualSum}" end="${annualSum.size()-7}">
-                            <c:if test="${fn:contains(firstHalf,'-')}">
-                                <th style="color: red;">${firstHalf}</th>
+                        <tr>
+                            <th>지출</th>
+                                <%--for문--%>
+                            <c:forEach var="spend" items="${monthlySpend}" varStatus="index">
+                                <c:if test="${spend gt 0}">
+                                    <td style="color:red;" id="totalSpend${index.index}">-${spend}</td>
+                                </c:if>
+                                <c:if test="${spend eq 0}">
+                                    <td>${spend}</td>
+                                </c:if>
+                            </c:forEach>
+                        </tr>
+                        <tr>
+                            <th>합계</th>
+                                <%--for문--%>
+                            <c:forEach var="total" items="${monthlyTotal}" varStatus="index">
+                                <c:if test="${total eq 0}">
+                                    <td>${total}</td>
+                                </c:if>
+                                <c:if test="${total gt 0}">
+                                    <td style="color: blue;" id="totalSum${index.index}">+${total}</td>
+                                </c:if>
+                                <c:if test="${total lt 0}">
+                                    <td style="color:red;" id="totalSum${index.index}">${total}</td>
+                                </c:if>
+                            </c:forEach>
                             </c:if>
-                            <c:if test="${!fn:contains(firstHalf,'-') and firstHalf ne '0'}">
-                                <th style="color: blue;">${firstHalf}</th>
-                            </c:if>
-                        </c:forEach>
-                    </tr>
-                    </tfoot>
-                </table>
+                        </tr>
+                        </tfoot>
+                    </table>
             </div>
         </div>
         <br>
@@ -116,32 +181,6 @@
     <input type="hidden" name="" id="toYear" value="${toYear}">
     <input type="hidden" name="" id="fromMonth" value="${fromMonth}">
     <input type="hidden" name="" id="toMonth" value="${toMonth}">
-    <%--&lt;%&ndash;지출&ndash;%&gt;--%>
-    <%--<c:set var="januarySpend" value="${monthlySpend.get(0)}"/>--%>
-    <%--<c:set var="febuarySpend" value="${monthlySpend.get(1)}"/>--%>
-    <%--<c:set var="marchSpend" value="${monthlySpend.get(2)}"/>--%>
-    <%--<c:set var="aprilSpend" value="${monthlySpend.get(3)}"/>--%>
-    <%--<c:set var="maySpend" value="${monthlySpend.get(4)}"/>--%>
-    <%--<c:set var="juneSpend" value="${monthlySpend.get(5)}"/>--%>
-    <%--<c:set var="julySpend" value="${monthlySpend.get(6)}"/>--%>
-    <%--<c:set var="augustSpend" value="${monthlySpend.get(7)}"/>--%>
-    <%--<c:set var="septemberSpend" value="${monthlySpend.get(8)}"/>--%>
-    <%--<c:set var="octoberSpend" value="${monthlySpend.get(9)}"/>--%>
-    <%--<c:set var="novemberSpend" value="${monthlySpend.get(10)}"/>--%>
-    <%--<c:set var="decemberSpend" value="${monthlySpend.get(11)}"/>--%>
-    <%--&lt;%&ndash;수입&ndash;%&gt;--%>
-    <%--<c:set var="januaryIncome" value="${monthlyIncome.get(0)}"/>--%>
-    <%--<c:set var="febuaryIncome" value="${monthlyIncome.get(1)}"/>--%>
-    <%--<c:set var="marchIncome" value="${monthlyIncome.get(2)}"/>--%>
-    <%--<c:set var="aprilIncome" value="${monthlyIncome.get(3)}"/>--%>
-    <%--<c:set var="mayIncome" value="${monthlyIncome.get(4)}"/>--%>
-    <%--<c:set var="juneIncome" value="${monthlyIncome.get(5)}"/>--%>
-    <%--<c:set var="julyIncome" value="${monthlyIncome.get(6)}"/>--%>
-    <%--<c:set var="augustIncome" value="${monthlyIncome.get(7)}"/>--%>
-    <%--<c:set var="septemberIncome" value="${monthlyIncome.get(8)}"/>--%>
-    <%--<c:set var="octoberIncome" value="${monthlyIncome.get(9)}"/>--%>
-    <%--<c:set var="novemberIncome" value="${monthlyIncome.get(10)}"/>--%>
-    <%--<c:set var="decemberIncome" value="${monthlyIncome.get(11)}"/>--%>
 
 
 </div>
@@ -187,7 +226,7 @@
 <script type="text/javascript">
 
 
-    $(document).on("ready", function () {
+    $(document).ready(function () {
         $('.menuTab').removeClass("active");
         $("#btn_report").addClass("active");
         $(".dropdown-item").removeClass("active");
@@ -199,15 +238,11 @@
 
         $("#fromYearMonthOutput").val(fromYear + "년 " + fromMonth + "월");
         $("#toYearMonthOutput").val(toYear + "년 " + toMonth + "월");
-        $("#periodTitle").html("<strong>" + fromYear + "년 " + fromMonth + "월" + ~toYear + "년 " + toMonth + "월 보고서</strong>");
-        // var today = new Date();
-        // var currentYear = today.getFullYear();
-        // var currentMonth = today.getMonth()+1;
-        // var dd = today.getDate();
-        // $("#yearOutput").val(yyyy+"년");
-        // $("#annualReportTitle1").html("<strong>"+yyyy+"년 상반기</strong>");
-        // $("#annualReportTitle2").html("<strong>"+yyyy+"년 하반기</strong>");
-
+        if (${fromYear eq toYear and fromMonth eq toMonth}) {
+            $("#periodTitle").html("<strong>" + fromYear + "년 " + fromMonth + "월 보고서</strong>");
+        } else {
+            $("#periodTitle").html("<strong>" + fromYear + "년 " + fromMonth + "월 ~ " + toYear + "년 " + toMonth + "월 보고서</strong>");
+        }
         $('.form_month').datetimepicker({
             language: 'ko',
             weekStart: 1,
@@ -227,7 +262,8 @@
                 month = 12;
                 $("#fromYearMonthOutput").val(year - 1 + "년 " + month + "월");
             } else {
-                $("#fromYearMonthOutput").val(year + "년 " + month - 1 + "월");
+                month--;
+                $("#fromYearMonthOutput").val(year + "년 " + month + "월");
             }
         });
         $('#fromYearNext').on("click", function () {
@@ -239,7 +275,8 @@
                 month = 1;
                 $("#fromYearMonthOutput").val(year + 1 + "년 " + month + "월");
             } else {
-                $("#fromYearMonthOutput").val(year + "년 " + month + 1 + "월");
+                month++;
+                $("#fromYearMonthOutput").val(year + "년 " + month + "월");
             }
         });
         $('#toYearPrev').on("click", function () {
@@ -251,7 +288,8 @@
                 month = 12;
                 $("#toYearMonthOutput").val(year - 1 + "년 " + month + "월");
             } else {
-                $("#toYearMonthOutput").val(year + "년 " + month - 1 + "월");
+                month--;
+                $("#toYearMonthOutput").val(year + "년 " + month + "월");
             }
         });
         $('#toYearNext').on("click", function () {
@@ -263,27 +301,95 @@
                 month = 1;
                 $("#toYearMonthOutput").val(year + 1 + "년 " + month + "월");
             } else {
-                $("#toYearMonthOutput").val(year + "년 " + month + 1 + "월");
+                month++;
+                $("#toYearMonthOutput").val(year + "년 " + month + "월");
             }
         });
+        var periodTotalSpend = ${periodTotalSpend};
+        var periodTotalIncome = ${periodTotalIncome};
+        $("#periodTotalSpend").text(Number(periodTotalSpend).toLocaleString('en'));
+        $("#periodTotalIncome").text(Number(periodTotalIncome).toLocaleString('en'));
+        for (var i = 0; i <${monthlyTotal.size()}; i++) {
+            var totalSum = $("#totalSum" + i).text();
+            $("#totalSum" + i).text(Number(totalSum).toLocaleString('en'));
+        }
+        for (var i = 0; i <${monthlyIncome.size()}; i++) {
+            var totalIncome = $("#totalIncome" + i).text();
+            $("#totalIncome" + i).text(Number(totalIncome).toLocaleString('en'));
+        }
+        for (var i = 0; i <${monthlySpend.size()}; i++) {
+            var totalSpend = $("#totalSpend" + i).text();
+            $("#totalSpend" + i).text(Number(totalSpend).toLocaleString('en'));
+        }
+        for (var i = 0; i <${reportListByCategory.size()}; i++) {
+            for (var j = 0; j <${monthlyTotal.size()}; j++) {
+                var data = $("#data" + i + j).text();
+                if (data > 0) {
+                    data = "+" + Number(data).toLocaleString('en');
+                } else {
+                    data = Number(data).toLocaleString('en');
+                }
+                $("#data" + i + j).text(data);
+            }
+        }
     });
 
+    $("#searchPeriod").on("click", function () {
+        var groupNo = ${groupNo};
+        var fym = $("#fromYearMonthOutput").val();
+        var tym = $("#toYearMonthOutput").val();
+        var tmp = fym.replace(/[^0-9]/g, '');
+        var fy = Number(tmp.substr(0, 4));
+        var fm = Number(tmp.substr(4, 6));
+        var tmp = tym.replace(/[^0-9]/g, '');
+        var ty = Number(tmp.substr(0, 4));
+        var tm = Number(tmp.substr(4, 6));
+        var check = 13 - fm + tm <= 12 ? true : false;
+        console.log(fm);
+        console.log(tm);
+        console.log(check);
+        if (fy == ty && fm < tm) {
+            location.href = "${pageContext.request.contextPath }/reportbyperiod/" + groupNo + "/" + fy + "/" + fm + "/" + ty + "/" + tm;
+        } else if (fy < ty && check) {
+            location.href = "${pageContext.request.contextPath }/reportbyperiod/" + groupNo + "/" + fy + "/" + fm + "/" + ty + "/" + tm;
+        } else if (fy == ty && fm == tm) {
+            location.href = "${pageContext.request.contextPath }/reportbyperiod/" + groupNo + "/" + fy + "/" + fm + "/" + ty + "/" + tm;
+        } else if (fy > ty) {
+            alert("기간 설정을 다시 해 주세요")
+        } else if (fy == ty && fm > tm) {
+            alert("기간 설정을 다시 해 주세요")
+        } else {
+            alert("기간은 최대 12개월까지 설정할 수 있습니다");
+        }
+    });
 
     var fnPrint = function () {
         window.print();
     };
 
-    <%--var isChanged = function () {--%>
-    <%--var year = $("#yearOutput").val();--%>
-    <%--year = Number(year.substr(0, 4));--%>
-    <%--location.href = "${pageContext.request.contextPath }/annualreport/${groupNo}/" + year;--%>
-    <%--};--%>
-
-
     $(function () {
         //for문으로 합계 구하기
-        var spend1 = [${januarySpend}, ${febuarySpend}, ${marchSpend}, ${aprilSpend}, ${maySpend}, ${juneSpend}];
-        var income1 = [${januaryIncome}, ${febuaryIncome}, ${marchIncome}, ${aprilIncome}, ${mayIncome}, ${juneIncome}];
+        var spend1 = new Array;
+        for (var i in ${monthlySpend}) {
+            spend1.push(${monthlySpend}[i]);
+        }
+        var income1 = new Array;
+        for (var i in ${monthlyIncome}) {
+            income1.push(${monthlyIncome}[i]);
+        }
+        var tickMonth = new Array;
+        if (${fromYear == toYear}) {
+            for (var i =${fromMonth}; i <=${toMonth}; i++) {
+                tickMonth.push(i + "월");
+            }
+        } else {
+            for (var i =${fromMonth}; i <= 12; i++) {
+                tickMonth.push(i + "월")
+            }
+            for (var i = 1; i <=${toMonth}; i++) {
+                tickMonth.push(i + "월")
+            }
+        }
         $.jqplot('graph1', [income1, spend1], {
             title: '',
             animate: true,
@@ -341,73 +447,7 @@
             axes: {//축 설정
                 xaxis: {
                     renderer: $.jqplot.CategoryAxisRenderer
-                    , ticks: [' ', '  ', '   ', '    ', '     ', '      ']
-                },
-                yaxis: {
-                    tickOptions: {formatString: "%'d"}
-                }
-            }
-        });
-        var spend2 = [${julySpend}, ${augustSpend}, ${septemberSpend}, ${octoberSpend}, ${novemberSpend}, ${decemberSpend}];
-        var income2 = [${julyIncome}, ${augustIncome}, ${septemberIncome}, ${octoberIncome}, ${novemberIncome}, ${decemberIncome}];
-        $.jqplot('graph2', [income2, spend2], {
-            title: '',
-            animate: true,
-            // seriesColors:['#ff0000','#0000ff'],
-            legend: {
-                renderer: $.jqplot.EnhancedLegendRenderer,//범례 설정
-                show: true,//출력유무
-                placement: 'inside',//출력위치 설정
-                location: 'ne',
-                marginTop: '15px'
-            },
-            series: [{//첫번째 그래프 설정
-                renderer: $.jqplot.BarRenderer//막대그래프로 출력
-                , label: '수입'//막대 이름설정
-                , pointLabels: {show: true, stackedValue: true}//수치 표기
-                , rendererOptions: {//만들기 옵션
-                    animation: {
-                        speed: 1500    //animation 설정 시 속도
-                    }
-                    /* 그림자 */
-                    , shadow: false
-                    //shadowDepth: 10, 그림자
-                    /* 막대에 관한 라인 */
-                    , showLine: true
-                    /* 각각의 막대그래프 램던 색 여부 */
-                    , varyBarColor: false
-                    /* 막대 넓이 */
-                    , barWidth: 20      //bar width 설정
-                    , barPadding: 20  //bar padding
-                    , barMargin: 0      //bar간 간격
-                }
-            },
-                {//두번째 그래프 설정
-                    renderer: $.jqplot.BarRenderer
-                    , label: '지출'
-                    , pointLabels: {show: true, stackedValue: true}
-                    , rendererOptions: {
-                        animation: {
-                            speed: 1500    //animation 설정 시 속도
-                        }
-                        /* 그림자 */
-                        , shadow: false
-                        //shadowDepth: 10, 그림자
-                        /* 막대에 관한 라인 */
-                        , showLine: true
-                        /* 각각의 막대그래프 램던 색 여부 */
-                        , varyBarColor: false
-                        /* 막대 넓이 */
-                        , barWidth: 20      //bar width 설정
-                        , barPadding: 20  //bar padding
-                        , barMargin: 0      //bar간 간격
-                    }
-                }],
-
-            axes: {//축 설정
-                xaxis: {
-                    renderer: $.jqplot.CategoryAxisRenderer
-                    , ticks: [' ', '  ', '   ', '    ', '     ', '      ']
+                    , ticks: tickMonth
                 },
                 yaxis: {
                     tickOptions: {formatString: "%'d"}
