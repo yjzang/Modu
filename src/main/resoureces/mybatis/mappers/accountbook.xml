@@ -5,9 +5,10 @@
 	
 	<select id="getAccountList" parameterType="Map" resultType="com.modu.vo.AccountbookVo">
 		<![CDATA[
-		select accountbookno,accountbookusage,accountbookspend,accountbookincome,categoryno,abt.groupno,memberfeeno,categoryname,to_char(accountbookregdate,'yyyy"년" mm"월" dd"일"') accountbookregdate
-		from accountbook_tbl abt join category_tbl cate using(categoryno)
-		where abt.groupno=#{groupNo} and abt.accountbookregdate between #{startDate} and #{endDate} 
+		
+		select accountbookno,accountbookusage,accountbookspend,accountbookincome,categoryno,groupno,memberfeeno,to_char(accountbookregdate,'yyyy"년" mm"월" dd"일"') accountbookregdate
+		from accountbook_tbl
+		where groupno=1 and accountbookregdate between '18/07/01' and '18/07/30'
 		]]>
 		<if test="spendFlag == 'spend'">
 		    and accountbookincome is null
@@ -103,9 +104,12 @@
 	</select>
 	
 	<insert id="connectTag" parameterType="com.modu.vo.AccountbookTagVo">
+		<selectKey keyProperty="accountbooktagno" resultType="int" order="BEFORE">	
+			select seq_accountbooktagno.nextval from dual
+		</selectKey>
 		<![CDATA[
 			insert into accountbook_tag_tbl values(
-			seq_accountbooktagno.nextval,
+			#{accountbooktagno},
 			#{accountbookno},
 			#{tagno})
 		]]>
@@ -149,6 +153,14 @@
 		]]>
 	</delete>
 	
+	<delete id="tagCleaner">
+		<![CDATA[
+			delete from tag_tbl where not exists (	select tagno 
+                    								from accountbook_tag_tbl
+                   	 								where tag_tbl.tagno = accountbook_tag_tbl.tagno)
+		]]>
+	</delete>
+
 	<insert id="saveAccountbookSpend" parameterType="com.modu.vo.AccountbookVo">
 		<selectKey keyProperty="accountbookno" resultType="int" order="BEFORE">	
 			select seq_accountbookno.nextval from dual
@@ -165,7 +177,14 @@
 			#{accountbookno},
 			#{accountbookUsage},
 			#{accountbookSpend},
-			#{categoryNo},
+		]]>
+			<if test="categoryNo == 0">
+		   		null,
+			</if>
+			<if test="categoryNo != 0">
+		    	#{categoryNo},
+			</if>
+		<![CDATA[
 			#{groupNo},
 			#{accountbookRegDate}) 
 		]]>
@@ -187,7 +206,14 @@
 			#{accountbookno},
 			#{accountbookUsage},
 			#{accountbookSpend},
-			#{categoryNo},
+		]]>
+			<if test="categoryNo == 0">
+		    	null,
+			</if>
+			<if test="categoryNo != 0">
+		    	#{categoryNo},
+			</if>
+		<![CDATA[
 			#{groupNo},
 			#{accountbookRegDate}) 
 		]]>

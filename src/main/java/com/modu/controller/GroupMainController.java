@@ -28,13 +28,15 @@ public class GroupMainController {
         System.out.println("모임메인");
 
         //모임 카테고리
-        ModuUserVo uservo =  (ModuUserVo) session.getAttribute("authUser");
-		List<ModuGroupVo> gList  = groupService.selectGroup(uservo.getUserNo());
-		model.addAttribute("gList",gList);
+        ModuUserVo userVo =  (ModuUserVo) session.getAttribute("authUser");
+        List<ModuGroupVo> gList  = groupService.selectGroup(userVo.getUserNo());
+        model.addAttribute("gList",gList);
 
-		//클릭한 모임  메인 보여주기
-		ModuGroupVo gvo = groupService.selectGroupImg(groupNo);
-		model.addAttribute("gvo",gvo);
+        //클릭한 모임  메인 보여주기
+        ModuGroupVo gvo = groupService.selectGroupImg(groupNo);
+        model.addAttribute("gvo",gvo);
+        userVo.setGroupNo(gvo.getGroupNo());
+        session.setAttribute("authUser",userVo);
 
         return "/group/groupMain";
     }

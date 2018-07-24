@@ -561,7 +561,7 @@ table {
 				str += "</td>";
 				str += "<td>";
 				str += "<select class='category form-control custom-select text-center' style='margin-top: 7px' id='category" + i + "'>";
-				str += "<option value='' selected>분류</option>";
+				str += "<option value='' selected>미분류</option>";
 
 				for (var i = 0; i < categoryList.length; i++) {
 					if (categoryList[i].categoryNo == accountbookVo.categoryNo) {
@@ -619,7 +619,7 @@ table {
 					str += "</td>";
 					str += "<td>";
 					str += "<select class='category form-control custom-select text-center' style='margin-top: 7px' id='category" + i + "'>";
-					str += "<option value='' selected>분류</option>";
+					str += "<option value='' selected>미분류</option>";
 
 					for (var i = 0; i < categoryList.length; i++) {
 						str += "<option value='" + categoryList[i].categoryNo + "'>"
@@ -816,6 +816,17 @@ table {
 			
 			//태그 저장 버튼 클릭시 체크된 항목 태그 일괄 적용	
 			$('#saveTag').on('click',function(){			
+				saveTagFunc()
+			})
+			
+			//엔터시 체크된 항목 태그 일괄 적용
+			$('#inputTagsName').on('keydown',function(){
+				if(event.keyCode == 13){
+					saveTagFunc()
+				}	
+			})
+			
+			function saveTagFunc(){
 				var AccountbookList = '';
 			    $('input:checkbox[name=chk]').each(function() {
 			    	if($(this).is(':checked')){
@@ -824,10 +835,12 @@ table {
 				})
 				
 				var tagName = $('#inputTagsName').val();
-				tagGroup(AccountbookList,tagName);
+			    if(tagName.trim() != ''){
+			    	tagGroup(AccountbookList,tagName);
+			    }
 				$('#tagBundleModal').modal('hide');
-			})
-			
+			}
+		
 			//db에서 태그 일괄 적용
 			function tagGroup(AccountbookList,tagName){
 				$.ajax({
@@ -876,10 +889,15 @@ table {
 						accountNo : accountNo
 					},
 					dataType : "json", 
-					success : function(tagList) {									
-						for(var i=0;i<tagList.length;i++){
-							tagRowInsert(tagList[i]);
-						}
+					success : function(tagList) {	
+						if(tagList.length == 0){
+							tagRowInsert('');
+							tagRow=1;
+						}else{
+							for(var i=0;i<tagList.length;i++){
+								tagRowInsert(tagList[i]);
+							}
+						}						
 						insertedTagRow = tagRow - 1;
 					},
 					error : function(XHR, status, error) {
@@ -904,7 +922,7 @@ table {
 				else{
 					str+="<input class='inputTag form-control mr-sm-2 ml-2 w-75 float-left' type='search' id='inputTag' name='" + tagList.tagno + "' value='" + tagList.tagname + "'>";
 				}
-				str+="<button type='button' name='tagDelete' class='btn btn-danger mr-1 float-left' id='" + tagList.tagno + "' value='" + tagRow + "'>삭제</button>";
+				str+="<button type='button' name='tagDelete' class='btn btn-danger mr-1 float-left' id='" + tagList.tagno + "' value='" + tagRow + "' tabindex='-1'>삭제</button>";
 				str+="<div style='clear:both;''></div>";
 				str+="</div>";
 				
@@ -915,13 +933,11 @@ table {
 			
 			//태그 삭제
 			$("#tagBody").on("click","[name=tagDelete]",function() {
-			
-				$(this).closest("div").remove();
 				var accountbooktagno = $(this).closest("div").attr("id");
 				var tagno = $(this).attr('id');
+				$(this).closest("div").remove();
 				tagDelete(accountbooktagno,tagno);
-				insertedTagRow--;
-				
+				insertedTagRow--;			
 			});
 			
 			//db에서 태그 삭제
@@ -950,18 +966,49 @@ table {
 			$("#tagBody").on("focusout","#inputTag",function() {
 				
 				var accountbookNo = $('#hiddenAnoTag').val();
-				var tagname = $(this).val();
+				var tagname = $(this).val();	
 
 				var selRow = $(this).closest("div").index() + 1;
-				
-				if(selRow <= insertedTagRow){
-					var tagno = $(this).attr('name');
-					var accountbooktagno = $(this).closest("div").attr("id");
-					updateTag(accountbookNo,accountbooktagno,tagno,tagname);								
-				}else{
-					insertTag(accountbookNo,tagname);					
+						
+				if(tagname.trim() != ''){
+					if(selRow <= insertedTagRow){
+						var accountbooktagno = $(this).closest("div").attr("id");
+						var tagno = $(this).attr('name');
+						updateTag(accountbookNo,accountbooktagno,tagno,tagname);								
+					}else{
+						var tagVo = insertTag(accountbookNo,tagname);
+						$(this).closest("div").attr("id",tagVo.accountbooktagno);
+						$(this).attr('name',tagVo.tagno);	
+						$(this).next("[name=tagDelete]").attr("id",tagVo.tagno);
+					}
 				}
+			});	
+		
+			//엔터키 입력시 태그 자동 포커스 전환
+			$("#tagBody").on("keydown","#inputTag",function() {			
+				if(event.keyCode == 13){
+					var index = $(".inputTag").index(this) + 1;
+					
+					var accountbookNo = $('#hiddenAnoTag').val();
+					var tagname = $(this).val();	
 
+					var selRow = $(this).closest("div").index() + 1;
+							
+					if(tagname.trim() != ''){
+						if(selRow <= insertedTagRow){
+							var accountbooktagno = $(this).closest("div").attr("id");
+							var tagno = $(this).attr('name');
+							updateTag(accountbookNo,accountbooktagno,tagno,tagname);								
+						}else{
+							var tagVo = insertTag(accountbookNo,tagname);
+							$(this).closest("div").attr("id",tagVo.accountbooktagno);
+							$(this).attr('name',tagVo.tagno);	
+							$(this).next("[name=tagDelete]").attr("id",tagVo.tagno);
+						}
+					}
+
+				    $(".inputTag").eq(index).focus();
+				}
 			});	
 			
 			//태그 수정
@@ -979,10 +1026,7 @@ table {
 					//dataType : "json",	
 					success : function() {
 						$("#accountbookContent").empty();
-						searching();	
-						$("#tagBody").empty();
-						tagRow = 1;	
-						tagList(accountbookNo);
+						searching();							
 					},
 					error : function(XHR, status, error) {
 						console.error(status + " : " + error);
@@ -992,6 +1036,7 @@ table {
 			
 			//태그 삽입
 			function insertTag(accountbookNo,tagname) {
+				var tagVo
 				$.ajax({
 					url : "${pageContext.request.contextPath }/accountbook/${gvo.groupNo}/inserttag",
 					type : "post",
@@ -1001,17 +1046,18 @@ table {
 						tagname : tagname
 					},
 					//dataType : "json",	
-					success : function() {
+					async: false,
+					success : function(tagInfo) {
 						$("#accountbookContent").empty();
 						searching();	
-						$("#tagBody").empty();
-						tagRow = 1;	
-						tagList(accountbookNo);
+						tagVo = tagInfo;
+						
 					},
 					error : function(XHR, status, error) {
 						console.error(status + " : " + error);
 					}
 				});
+				return tagVo
 			}
 			
 			//카테고리 모달창 팝업
