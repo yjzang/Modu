@@ -22,11 +22,48 @@ public class ReportController {
     ModuGroupService groupService;
 
 
-    @RequestMapping(value = "/reportError/{groupNo}", method = RequestMethod.GET)
-    public String reportErrorPage(@PathVariable int groupNo, Model model) {
-        System.out.println("리포트 생성이 불가하여 에러페이지로 이동");
-        model.addAttribute("groupNo", groupNo);
-        return "/report/reportErrorPage";
+    @RequestMapping(value = "/reportbyperiod/{groupNo}/{fromYear}/{fromMonth}/{toYear}/{toMonth}", method = RequestMethod.GET)
+    public String reportByPeriod(@PathVariable String fromYear, @PathVariable String fromMonth, @PathVariable String toYear, @PathVariable String toMonth, @PathVariable int groupNo, Model model, HttpSession session) {
+        //모임 카테고리
+        ModuUserVo userVo = (ModuUserVo) session.getAttribute("authUser");
+        List<ModuGroupVo> gList = groupService.selectGroup(userVo.getUserNo());
+        model.addAttribute("gList", gList);
+
+        //클릭한 모임  메인 보여주기
+        ModuGroupVo gvo = groupService.selectGroupImg(userVo.getGroupNo());
+        model.addAttribute("gvo", gvo);
+
+        System.out.println("기간별 보고서로 이동");
+        model.addAttribute("fromYear", fromYear);
+        model.addAttribute("fromMonth", fromMonth);
+        model.addAttribute("toYear", toYear);
+        model.addAttribute("toMonth", toMonth);
+        model.addAttribute("groupNo", userVo.getGroupNo());
+        Map<String, Object> map = reportService.reportByPeriod(groupNo, fromYear, fromMonth, toYear, toMonth);
+        List<Object> list = (List<Object>) map.get("reportListByCategory");
+        if (!list.isEmpty()) {
+            System.out.println("RLBC" + map.get("reportListByCategory").toString());
+            System.out.println("MT" + map.get("monthlyTotal").toString());
+            model.addAttribute("reportListByCategory", map.get("reportListByCategory"));
+            model.addAttribute("monthlySpend", map.get("monthlySpend"));
+            model.addAttribute("monthlyIncome", map.get("monthlyIncome"));
+            model.addAttribute("monthlyTotal", map.get("monthlyTotal"));
+            return "/report/report_by_period";
+        } else {
+            return "redirect:/reportError/" + userVo.getGroupNo();
+        }
+    }
+
+    @RequestMapping(value = "/report/getRecentTag/{groupNo}", method = RequestMethod.GET)
+    public String getRecentTag(@PathVariable String groupNo) {
+        int crtPage = 1;
+        System.out.println("태그별 보고서를 위한 그룹번호 : " + groupNo);
+        int recentTag = reportService.getRecentTag(groupNo);
+        if (recentTag == 0) {
+            return "redirect:/reportError/" + groupNo;
+        } else {
+            return "redirect:/reportbytag/" + crtPage + "/" + recentTag;
+        }
     }
 
     @RequestMapping(value = "/reportbytag/{crtPage}/{tagNo}", method = RequestMethod.GET)
@@ -60,50 +97,6 @@ public class ReportController {
         return "/report/report_by_tag";
     }
 
-    @RequestMapping(value = "/report/getRecentTag/{groupNo}", method = RequestMethod.GET)
-    public String getRecentTag(@PathVariable String groupNo) {
-        int crtPage = 1;
-        System.out.println("태그별 보고서를 위한 그룹번호 : " + groupNo);
-        int recentTag = reportService.getRecentTag(groupNo);
-        if (recentTag == 0) {
-            return "redirect:/reportError/" + groupNo;
-        } else {
-            return "redirect:/reportbytag/" + crtPage + "/" + recentTag;
-        }
-    }
-
-
-    @RequestMapping(value = "/reportbyperiod/{groupNo}/{fromYear}/{fromMonth}/{toYear}/{toMonth}", method = RequestMethod.GET)
-    public String reportByPeriod(@PathVariable String fromYear, @PathVariable String fromMonth, @PathVariable String toYear, @PathVariable String toMonth, @PathVariable int groupNo, Model model, HttpSession session) {
-        //모임 카테고리
-        ModuUserVo userVo = (ModuUserVo) session.getAttribute("authUser");
-        List<ModuGroupVo> gList = groupService.selectGroup(userVo.getUserNo());
-        model.addAttribute("gList", gList);
-
-        //클릭한 모임  메인 보여주기
-        ModuGroupVo gvo = groupService.selectGroupImg(userVo.getGroupNo());
-        model.addAttribute("gvo", gvo);
-
-        System.out.println("기간별 보고서로 이동");
-        model.addAttribute("fromYear", fromYear);
-        model.addAttribute("fromMonth", fromMonth);
-        model.addAttribute("toYear", toYear);
-        model.addAttribute("toMonth", toMonth);
-        model.addAttribute("groupNo", userVo.getGroupNo());
-        Map<String, Object> map = reportService.reportByPeriod(groupNo, fromYear, fromMonth, toYear, toMonth);
-        List<Object> list = (List<Object>) map.get("reportListByCategory");
-        if (!list.isEmpty()) {
-            System.out.println("RLBC" + map.get("reportListByCategory").toString());
-            System.out.println("MT" + map.get("monthlyTotal").toString());
-            model.addAttribute("reportListByCategory", map.get("reportListByCategory"));
-            model.addAttribute("monthlySpend", map.get("monthlySpend"));
-            model.addAttribute("monthlyIncome", map.get("monthlyIncome"));
-            model.addAttribute("monthlyTotal", map.get("monthlyTotal"));
-            return "/report/report_by_period";
-        } else {
-            return "redirect:/reportError/" + userVo.getGroupNo();
-        }
-    }
 
     @RequestMapping(value = "/report/getTagListForPaging", method = RequestMethod.POST)
     @ResponseBody
@@ -112,6 +105,13 @@ public class ReportController {
         Map<String,Object> map = reportService.getTagListForPaging(reportVo);
         System.out.println(map.get("pagingList").toString());
         return map;
+    }
+
+    @RequestMapping(value = "/reportError/{groupNo}", method = RequestMethod.GET)
+    public String reportErrorPage(@PathVariable int groupNo, Model model) {
+        System.out.println("리포트 생성이 불가하여 에러페이지로 이동");
+        model.addAttribute("groupNo", groupNo);
+        return "/report/reportErrorPage";
     }
 
 }

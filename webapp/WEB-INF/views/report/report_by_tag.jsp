@@ -23,7 +23,8 @@
     <%--<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath }/assets/jquery/jquery.autocomplete.css" />--%>
 
 </head>
-<body style="overflow-x:hidden; overflow-y:auto;">
+
+<link style="overflow-x:hidden; overflow-y:auto;">
 
 
 <c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
@@ -32,26 +33,21 @@
 <div class="container">
 
     <div class="mb-3">
+        <div align="center"><span style="font-size: 35px"
+                                  id="periodTitle"><strong>태그명+ 보고서</strong></span>
+        </div>
         <div>
-            <div align="center" style="margin-top: 50px">
-                <input type="text" value="" id="tagNameSearch" style="width:500px;">
-                <button type="button" id="searchPeriod">검색</button>
-            </div>
-            <br>
-            <div align="center"><span style="font-size: 35px"
-                                      id="periodTitle"><strong>태그명+ 보고서</strong></span>
-            </div>
-            <br>
-            <br>
+            <%--<div class="mx-auto" align="center" style="margin-top: 50px">--%>
+            <%--</div>--%>
             <div style="float:left">
-                <table style="margin-left: 80px;margin-top: 30px" id="shortcutByAjax">
+                <table style="margin-left: 80px;margin-top: 30px;max-height: 280px;" id="shortcutByAjax">
                     <tr style="border-bottom: 1px black solid;">
-                        <td style="font-size: 20px"><strong>태그 바로가기</strong></td>
+                        <td style="font-size: 20px;" colspan="3"><strong>태그 바로가기</strong></td>
                     </tr>
                     <tbody id="removeBody" align="center">
                     <c:forEach var="pagingList" items="${pagingList}">
                         <tr>
-                            <td>
+                            <td colspan="3">
                                 <a href="/reportbytag/${crtPage}/${pagingList.tagNo}">${pagingList.tagName}</a>
                             </td>
                         </tr>
@@ -59,28 +55,38 @@
                     <tr>
                         <td>
                             <c:if test="${prev eq true}">
-                                <button id="btnPrev">◀</button>
+                                <button class="btn" id="btnPrev">◀</button>
                             </c:if>
+                        </td>
+                        <td class="btn-group btn-group-toggle">
                             <c:forEach var="pagingBtn" begin="${startPageBtnNo}" end="${endPageBtnNo}">
-                                <button class="pagingBtn" id="${pagingBtn}pagingBtn">${pagingBtn}</button>
+                                <button class="pagingBtn btn" id="${pagingBtn}pagingBtn">${pagingBtn}</button>
                             </c:forEach>
+                        </td>
+                        <td>
                             <c:if test="${next eq true}">
-                                <button id="btnNext">▶</button>
+                                <button class="btn" id="btnNext">▶</button>
                             </c:if>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <input type="text" value="" id="searchBox" style="width:100px; margin-left: 80px; margin-top: 20px;">
+                <button type="button" id="searchPeriod">검색</button>
+                <br>
+                <span style="color:red; margin-left: 60px; font-size: 20px;" id="searchResult"></span>
             </div>
+
+            <%--<div style="clear: both"></div>--%>
             <c:forEach var="tag" items="${tagList}">
                 <c:if test="${tagNo eq tag.tagNo}">
                     <c:set var="tagNameForTitle" value="${tag.tagName}"/>
                 </c:if>
             </c:forEach>
             <div style="float:right;margin-top: 50px;">
-                <table align="right" style="font-size: 25px;margin-right: 70px; width:150px;">
+                <table align="right" style="font-size: 25px;margin-right: 70px; width:150px; text-align: center">
                     <tr>
-                        <th align="center" colspan="2">총 수입</th>
+                        <th colspan="2">총 수입</th>
                     </tr>
                     <tr>
                         <td style="color:blue;" id="periodTotalIncome" align="center"></td>
@@ -96,44 +102,49 @@
                 </table>
             </div>
             <div class="mx-auto">
-                <c:if test="${!empty accountbookListByTag}">
-                    <table align="center" class="table" style="width:700px;">
-                        <thead>
-                        <tr>
-                            <th scope="col" colspan="5" style="font-size: 25px;text-align: center">장소, 인원별 사용금액</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td align="center">날짜</td>
-                            <td align="center">내역</td>
-                            <td align="center">장소</td>
-                            <td align="center">인원</td>
-                            <td align="center">1인당 금액</td>
-                        </tr>
+                <c:set var="placeNumCount" value="0"/>
+                <c:forEach var="noPlaceCheck" items="${accountbookListByTag}">
+                    <c:if test="${noPlaceCheck.accountbookPlace ne null}">
+                        <c:set var="placeNumCount" value="${placeNumCount+1}"/>
+                    </c:if>
+                </c:forEach>
+                <c:if test="${placeNumCount ne 0}">
+                <br><br>
+                <table align="center" class="table" style="width:700px;">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="5" style="font-size: 25px;text-align: center">장소, 인원별 사용금액</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td align="center">날짜</td>
+                        <td align="center">내역</td>
+                        <td align="center">장소</td>
+                        <td align="center">인원</td>
+                        <td align="center">1인당 금액</td>
+                    </tr>
+                    </c:if>
+                    <c:if test="${!empty accountbookListByTag}">
+                    <c:forEach var="item" items="${accountbookListByTag}" varStatus="index">
+                        <c:if test="${item.totalSpend > 0 and item.accountbookPlace ne null}">
+                            <tr>
+                                <td align="center">${item.accountbookRegdate}</td>
+                                <td align="center">${item.accountbookUsage}</td>
+                                <td align="center">${item.accountbookPlace}</td>
+                                <td align="center">${item.accountbookPersonnel}</td>
+                                <td align="center"
+                                    id="spendByPersonnel${index.index}">${item.totalSpend/item.accountbookPersonnel}</td>
+                            </tr>
 
-                        <c:forEach var="item" items="${accountbookListByTag}" varStatus="index">
-                            <c:if test="${item.totalSpend > 0 and item.accountbookPlace ne null}">
-                                <tr>
-                                    <td align="center">${item.accountbookRegdate}</td>
-                                    <td align="center">${item.accountbookUsage}</td>
-                                    <td align="center">${item.accountbookPlace}</td>
-                                    <td align="center">${item.accountbookPersonnel}</td>
-                                    <td align="center"
-                                        id="spendByPersonnel${index.index}">${item.totalSpend/item.accountbookPersonnel}</td>
-                                </tr>
-
-                            </c:if>
-                        </c:forEach>
-                        </tbody>
-                    </table>
+                        </c:if>
+                    </c:forEach>
+                    </tbody>
+                </table>
                 </c:if>
             </div>
 
             <div style="clear: both;"></div>
-            <br>
-            <br>
-
             <div class="mx-auto" id="graph1" style="width: 90%; height: 500px;"></div>
         </div>
         <br>
@@ -200,18 +211,14 @@
 
 </div>
 
+
+<%--<input type="hidden" id="testest" value="${tagList}">--%>
+
+
 <c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
-<%--<script src="https://code.jquery.com/jquery-1.12.4.js"></script>--%>
-<%--<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>--%>
-<%--<script type="text/javascript" src="${pageContext.request.contextPath }/assets/jquery/lib/jquery.js"></script>--%>
-<%--<script type="text/javascript" src="${pageContext.request.contextPath }/assets/jquery/lib/jquery.bgiframe.min.js"></script>--%>
-<%--<script type="text/javascript" src="${pageContext.request.contextPath }/assets/jquery/lib/jquery.ajaxQueue.js"></script>--%>
-<%--<script type="text/javascript" src="${pageContext.request.contextPath }/assets/jquery/jquery.autocomplete.js"></script>--%>
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<link type="text/css" rel="stylesheet"
-      href="${pageContext.request.contextPath }/assets/jquery/jquery.autocomplete.css"/>
-<%--<script src="${pageContext.request.contextPath }/assets/jquery/jquery.min.js"></script>--%>
-<script src="${pageContext.request.contextPath }/assets/jquery/jquery.autocomplete.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<!-- 자동 완성을 위한 jquery.autocomplete include -->
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js'></script>
 
 <script src="${pageContext.request.contextPath }/assets/js/bootstrap.js"></script>
 <script src="${pageContext.request.contextPath }/assets/js/header.js"></script>
@@ -249,19 +256,20 @@
         charset="UTF-8"></script>
 
 <script type="text/javascript">
-    <%--자동완성부분--%>
-    <%--autocomplete도 인식 안되고 for문도 안돌아가는중--%>
-    <%--$( function() {--%>
-    <%--var availableTags = [];--%>
-    <%--for (var i=0; i<${tagList.size()}; i++){--%>
-    <%--availableTags.push("${tagList.get(i).tagName}");--%>
-    <%--};--%>
-    <%--$( "#tags" ).autocomplete({--%>
-    <%--source: availableTags--%>
-    <%--});--%>
-    <%--} );--%>
-
+    var availableTags = new Array();
+    var availableTagNo = new Array();
     $(document).ready(function () {
+
+        <c:forEach var="list" items="${tagList}">
+        availableTags.push("${list.tagName}");
+        availableTagNo.push(${list.tagNo});
+        </c:forEach>
+        console.log(availableTags);
+
+        $("#searchBox").autocomplete({
+            lookup: availableTags
+        });
+
         $('.menuTab').removeClass("active");
         $("#btn_report").addClass("active");
         $(".dropdown-item").removeClass("active");
@@ -283,6 +291,22 @@
         }
     });
 
+    $("#searchPeriod").on("click", function () {
+        console.log("asdf")
+        var searchKWD = $("#searchBox").val();
+        var tagNo = 0;
+
+        for (var i in availableTags) {
+            if (searchKWD == availableTags[i]) {
+                tagNo = availableTagNo[i];
+                location.href = "${pageContext.request.contextPath}/reportbytag/" + ${crtPage} +"/" + tagNo;
+            } else {
+                $("#searchResult").html("검색 결과가 없습니다.");
+            }
+        }
+    });
+
+
     $("#shortcutByAjax").on("click", "button", function () {
         var tagNo = ${tagNo};
         var crtPage = $("#crtPageForPaging").val();
@@ -290,14 +314,14 @@
         var tmpText = $(this).attr("id");
 
         console.log(tmpText);
-        if (tmpText == 'btnNext'){
+        if (tmpText == 'btnNext') {
             crtPage++;
             $("#crtPageForPaging").val(crtPage);
-        }else if(tmpText == 'btnPrev'){
+        } else if (tmpText == 'btnPrev') {
             crtPage--;
             $("#crtPageForPaging").val(crtPage);
-        }else if(tmpText.search('pagingBtn') >= 0){
-            crtPage = tmpText.replace(/[^0-9]/g,'');
+        } else if (tmpText.search('pagingBtn') >= 0) {
+            crtPage = tmpText.replace(/[^0-9]/g, '');
             $("#crtPageForPaging").val(crtPage);
         }
         console.log(tagNo);
@@ -319,23 +343,26 @@
                 $.each(pagingList, function (index, value) {
                     var str = "";
                     str += "<tr>";
-                    str += "<td>";
+                    str += "<td colspan='3'>";
                     str += "<a href='${pageContext.request.contextPath}/reportbytag/" + crtPage + "/" + value.tagNo + "'>" + value.tagName + "</a>";
                     str += "</td>";
                     str += "</tr>";
+                    str += "<tr>";
+                    str += "<td>";
                     $("#removeBody").append(str);
                 });
-                $("#removeBody").append("<tr><td style='text-align: center'>");
                 if (prev == true) {
-                    $("#removeBody").append("<button id='btnPrev'>◀</button>");
+                    $("#removeBody").append("<button class='btn' id='btnPrev'>◀</button>");
                 }
+                $("#removeBody").append("</td><td class='btn-group btn-group-toggle' style='text-align: center'>");
                 for (var i = startPageBtnNo; i <= endPageBtnNo; i++) {
                     var str = "";
-                    str += "<button class='pagingBtn' id='" + i + "pagingBtn'>" + i + "</button>";
+                    str += "<button class='pagingBtn btn' id='" + i + "pagingBtn'>" + i + "</button>";
                     $("#removeBody").append(str);
                 }
+                    $("#removeBody").append("</td><td>");
                 if (next == true) {
-                    $("#removeBody").append("<button id='btnNext'>▶</button>");
+                    $("#removeBody").append("<button class='btn' id='btnNext'>▶</button>");
                 }
                 $("#removeBody").append("</td></tr>");
             }, error: function () {
