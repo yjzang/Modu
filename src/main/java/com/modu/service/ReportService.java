@@ -174,7 +174,6 @@ public class ReportService {
 
 
     public Map<String, Object> reportByTag(ModuUserVo userVo, int tagNo, ReportVo reportVo) {
-        List<ReportVo> tagList = reportDao.getTagList(userVo.getGroupNo());
         List<ReportVo> accountbookListByTag = reportDao.getAccountbookListByTag(tagNo);
 
         int totalCount = reportDao.postCount(reportVo.getGroupNo());//해당카테고리의 모든 포스트 수
@@ -204,7 +203,7 @@ public class ReportService {
         }
 
         Map<String, Object> outputMap = new HashMap<>();
-        outputMap.put("tagList", tagList);
+        outputMap.put("tagList", reportDao.getTagList(userVo.getGroupNo()));
         outputMap.put("accountbookListByTag", accountbookListByTag);
         outputMap.put("pagingList", pagingList);
         outputMap.put("crtPage",reportVo.getCrtPage());

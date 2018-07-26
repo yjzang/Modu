@@ -58,9 +58,7 @@ public class ReportDao {
     }
 
     public List<ReportVo> getTagList(int groupNo) {
-        List<ReportVo> list = sqlSession.selectList("report.getTagList",groupNo);
-        System.out.println(list.toString());
-        return list;
+        return sqlSession.selectList("report.getTagList",groupNo);
     }
 
     public List<ReportVo> getAccountbookListByTag(int tagNo) {

@@ -1,10 +1,19 @@
 package com.modu.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +27,6 @@ import com.modu.service.ModuGroupService;
 import com.modu.service.ModuUserService;
 import com.modu.vo.AccountbookCategoryVo;
 import com.modu.vo.AccountbookTagVo;
-import com.modu.vo.AccountbookVo;
 import com.modu.vo.ModuGroupVo;
 import com.modu.vo.ModuUserVo;
 
@@ -190,4 +198,88 @@ public class AccountBookController {
 			return "redirect:/main";
 		}
 	}
+	
+	@RequestMapping( "/test")
+	public String test(){
+
+		return "/accountbook/test";
+	}
+	
+	
+	@RequestMapping(value = "/trans")
+	@ResponseBody
+	public String trans(String address) {
+		StringBuilder html = new StringBuilder();
+		String url = "https://openapi.naver.com/v1/map/geocode?query=" + address; // encodeURIComponent로 인코딩 된 주소
+		String clientId = "YX8YchtPnKuE7FGKGyW6";
+		String clientSecret = "gnH5o9GF66";
+
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet request = new HttpGet(url);
+		request.addHeader("X-Naver-Client-Id", clientId);  //해더에 Clinet Id와 Client Secret을 넣습니다
+		request.addHeader("X-Naver-Client-Secret", clientSecret);
+		try {
+			HttpResponse response = client.execute(request);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+			String current = "";
+			while ((current = reader.readLine()) != null) {
+				html.append(current);
+			}
+			reader.close();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	     	return html.toString();
+	 }
+	
+	@RequestMapping(value = "/search")
+	@ResponseBody
+	public List<String> search(String address) {
+		StringBuilder html = new StringBuilder();
+		String url = "https://openapi.naver.com/v1/search/local.xml?query=" + address + "&display=50&start=1&sort=random"; // encodeURIComponent로 인코딩 된 주소
+		String clientId = "YX8YchtPnKuE7FGKGyW6";
+		String clientSecret = "gnH5o9GF66";
+
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet request = new HttpGet(url);
+		request.addHeader("X-Naver-Client-Id", clientId);  //해더에 Clinet Id와 Client Secret을 넣습니다
+		request.addHeader("X-Naver-Client-Secret", clientSecret);
+		try {
+			HttpResponse response = client.execute(request);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+			String current = "";
+			while ((current = reader.readLine()) != null) {
+				html.append(current);
+			}
+			reader.close();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+			List<String> addrList = new ArrayList<String>();
+			int length = html.length();
+			int start = 0;
+			int end = 0;
+			while(end<length) {
+				start = html.indexOf("<address>",end);
+				if(start == -1 ) {
+					break;
+				}else {
+					start += 9;
+				}
+				end = html.indexOf("</address>",end);
+				
+				addrList.add(html.substring(start,end));	
+				end = end+10;
+			}
+			
+			//String addr = html.substring(html.indexOf("<address>")+9,html.indexOf("</address>"));
+
+	     	return addrList;
+	 }
+
 }

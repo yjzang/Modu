@@ -37,7 +37,7 @@ public class ReportVo {
     private int accountbookPersonnel;
 //페이징
 final int listCnt = 3;
-    final int pageBtnCount = 2;
+    final int pageBtnCount = 1;
     private int crtPage;
 
     public ReportVo() {
