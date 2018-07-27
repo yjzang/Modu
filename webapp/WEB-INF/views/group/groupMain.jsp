@@ -52,8 +52,9 @@
 
         <div class="localHotplaceArea">
             <div class="localHotplaceTop6">
-                <div class="card-deck">
-                    <div class="card cardBackground">
+                
+                <%-- <div class="card-deck">
+					<div class="card cardBackground">
                         <img src="${pageContext.request.contextPath }/assets/images/local_hotplace1.jpg" class="mx-auto w-75">
                         <div class="card-body">
                             <h5 class="card-title"><strong>가보정 1관</strong></h5>
@@ -102,11 +103,12 @@
                             <span class="localHotplaceParking"></span>
                             <p class="card-text">경기도 수원시 영통구 매탄동 11 - 20</p>
                         </div>
-                    </div>
+                    </div> --%> 
+                    
                 </div>
             </div>
-            <div class="localHotplaceTitle">
-                <span><strong>#이번모임 어디가지<br> #수원편</strong></span>
+            <div class="localHotplaceTitle" value="${area}">
+                <span><strong>#이번모임 어디가지<br> #${area}편</strong></span>
             </div>
         </div>
     </div>
@@ -132,44 +134,156 @@
 <c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
 
 
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="${pageContext.request.contextPath }/assets/js/bootstrap.js"></script>
 <script src="${pageContext.request.contextPath }/assets/js/header.js"></script>
-<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=slvC1SL1B78rI5IoCUhs&submodules=geocoder"></script>
+<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=YX8YchtPnKuE7FGKGyW6&submodules=geocoder"></script>
 <script type="text/javascript">
     $(".carousel").carousel({
         interval: 10000
     })
-    var map = new naver.maps.Map('map');
-    var myaddress = '서울특별시 서초구 서초대로74길33';// 도로명 주소나 지번 주소만 가능 (건물명 불가!!!!)
-    naver.maps.Service.geocode({address: myaddress}, function(status, response) {
-        if (status !== naver.maps.Service.Status.OK) {
-            // return alert(myaddress + '의 검색 결과가 없거나 기타 네트워크 에러');
-        }
-        var result = response.result;
-        // 검색 결과 갯수: result.total
-        // 첫번째 결과 결과 주소: result.items[0].address
-        // 첫번째 검색 결과 좌표: result.items[0].point.y, result.items[0].point.x
-        var myaddr = new naver.maps.Point(result.items[0].point.x, result.items[0].point.y);
-        map.setCenter(myaddr); // 검색된 좌표로 지도 이동
-        // 마커 표시
-        var marker = new naver.maps.Marker({
-            position: myaddr,
-            map: map
-        });
-        // 마커 클릭 이벤트 처리
-        naver.maps.Event.addListener(marker, "click", function(e) {
-            if (infowindow.getMap()) {
-                infowindow.close();
-            } else {
-                infowindow.open(map, marker);
-            }
-        });
-        // 마크 클릭시 인포윈도우 오픈
-        var infowindow = new naver.maps.InfoWindow({
-            content: '<h4> [여기가 현재위치]</h4><a href="file:///D:/bootstrap-4.1.1-dist/sample.html#" target="_blank"><img src="../../../assets/images/club03.png" alt="??"></a>'
-        });
-    });
+    
+	var text = $(".localHotplaceTitle").val()
+	searchCallBack(text+"맛집");
+
+	//상호명을 통한 주소 검색
+    function searchCallBack(Addr){
+    	$.ajax({
+			type: 'post',
+			url: '${pageContext.request.contextPath}/groupmain/${gvo.groupNo}/search',
+			data: {'address' : encodeURIComponent(Addr)},  //encodeURIComponent로 인코딩하여 넘깁니다.
+			dataType: 'json',
+			timeout: 10000,
+			cache: false,
+			error:function(x,e){
+				alert('요청하신 작업을 수행하던 중 예상치 않게 중지되었습니다.\n\n다시 시도해 주십시오.');
+			},
+			success: function (addr) {
+				var str = "";
+				var j = 0;
+				for(var i=0;i<addr.length;i++){															
+					if(i%3==0){
+						j=i;
+						str+='<div class="card-deck mx-2">'
+					}
+
+					str+='<div class="card cardBackground">'
+					str+='<img src="${pageContext.request.contextPath }/assets/images/local_hotplace2.jpg" class="mx-2 w-75">'
+					str+='<div class="card-body">'
+					str+='<h5 class="card-title"><strong>' + addr[i].split("/")[1] + '</strong></h5>'
+					str+='<p class="card-text">' + addr[i].split("/")[0] + '</p>'
+					str+='</div>'
+					str+='</div>'
+					
+					if(i==j+2){
+						str+='</div>'
+					}	
+				}
+				
+				$(".localHotplaceTop6").append(str);
+				
+				var latlngs = [ ];
+				
+				for(var i=0;i<addr.length;i++){
+					latlngs.push(jusoCallBack(addr[i].split("/")[1]))
+				}
+				
+				console.log(latlngs);
+				
+				drawMap(latlngs);
+			}
+		});
+	}; 
+
+	//주소를 통해 위/경도 검색
+    function jusoCallBack(Addr){
+		var lng;
+		var lat;
+    	$.ajax({
+			type: 'post',
+			url: '${pageContext.request.contextPath}/groupmain/${gvo.groupNo}/trans',
+			data: {'address' : encodeURIComponent(Addr)},  //encodeURIComponent로 인코딩하여 넘깁니다.
+			dataType: 'json',
+			timeout: 10000,
+			cache: false,
+			error:function(x,e){
+				alert('요청하신 작업을 수행하던 중 예상치 않게 중지되었습니다.\n\n다시 시도해 주십시오.');
+			},
+			async: false,
+			success: function (getData) {
+				var data = JSON.parse(getData);
+				lng = data.result.items[0].point.x;
+				lat = data.result.items[0].point.y;				
+				
+			}
+		});
+    	return new naver.maps.LatLng(lat, lng)
+	}; 
+	
+	//위경도를 통해 지도 그리기
+	function drawMap(latlngs){
+		//var HOME_PATH = window.HOME_PATH || '.';
+		var HOME_PATH = "/Modu";
+		
+		var map = new naver.maps.Map(document.getElementById('map'), {
+		    zoom: 11,
+		    center: jusoCallBack($(".localHotplaceTitle").val())
+		});
+
+		/* var latlngs = [
+		    new naver.maps.LatLng(lat, lng)
+		]; */
+		
+		var markerList = [];
+		
+		for (var i=0, ii=latlngs.length; i<ii; i++) {
+		    var icon = {
+		            url: HOME_PATH +'/assets/images/down.png',
+		            size: new naver.maps.Size(24, 37),
+		            anchor: new naver.maps.Point(12, 37),
+		            origin: new naver.maps.Point(i * 29, 0)
+		        },
+		        marker = new naver.maps.Marker({
+		            position: latlngs[i],
+		            map: map,
+		            icon: icon
+		        });
+		
+		    marker.set('seq', i);
+		
+		    markerList.push(marker);
+		
+		    marker.addListener('mouseover', onMouseOver);
+		    marker.addListener('mouseout', onMouseOut);
+		
+		    icon = null;
+		    marker = null;
+		}
+		
+		function onMouseOver(e) {
+		    var marker = e.overlay,
+		        seq = marker.get('seq');
+		
+		    marker.setIcon({
+		        url: HOME_PATH +'/assets/images/good01.png',
+		        size: new naver.maps.Size(24, 37),
+		        anchor: new naver.maps.Point(12, 37),
+		        origin: new naver.maps.Point(seq * 29, 50)
+		    });
+		}
+		
+		function onMouseOut(e) {
+		    var marker = e.overlay,
+		        seq = marker.get('seq');
+		
+		    marker.setIcon({
+		        url: HOME_PATH +'/assets/images/down.png',
+		        size: new naver.maps.Size(24, 37),
+		        anchor: new naver.maps.Point(12, 37),
+		        origin: new naver.maps.Point(seq * 29, 0)
+		    });
+		} 
+	}
 </script>
 </body>
 </html>

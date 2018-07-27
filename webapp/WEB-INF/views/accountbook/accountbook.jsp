@@ -567,7 +567,7 @@ table {
 				str += "</td>";
 				str += "<td>";
 				str += "<select class='category form-control custom-select text-center' style='margin-top: 7px' id='category" + i + "'>";
-				str += "<option value='' selected>미분류</option>";
+				str += "<option value='0' selected>미분류</option>";
 
 				for (var i = 0; i < categoryList.length; i++) {
 					if (categoryList[i].categoryNo == accountbookVo.categoryNo) {
@@ -625,7 +625,7 @@ table {
 					str += "</td>";
 					str += "<td>";
 					str += "<select class='category form-control custom-select text-center' style='margin-top: 7px' id='category" + i + "'>";
-					str += "<option value='' selected>미분류</option>";
+					str += "<option value='0' selected>미분류</option>";
 
 					for (var i = 0; i < categoryList.length; i++) {
 						str += "<option value='" + categoryList[i].categoryNo + "'>"
@@ -653,7 +653,9 @@ table {
 					if( $(this).find(".usage").val() != '' ){
 						var id = $(this).closest("tr").attr("id",0);
 						var usage = $(this).find(".usage").val();
-						$(this).closest("tr").attr("id",saveAccountbook(usage,'','',date));
+						var accountVo = saveAccountbook(usage,'','',date);
+						$(this).closest("tr").attr("id",accountVo.accountbookno);
+						$(this).find(".category").val(accountVo.categoryNo).attr("selected","selected");
 					}else if( $(this).find(".spend").val() != '' ){
 						var id = $(this).closest("tr").attr("id",0);
 						var spend = $(this).find(".spend").val();
@@ -663,19 +665,19 @@ table {
 							alert("숫자만 입력하세요");
 							$(this).find(".spend").val('');
 						}else{
-							$(this).closest("tr").attr("id",saveAccountbook('',spend,'',date));
+							$(this).closest("tr").attr("id",saveAccountbook('',spend,'',date).accountbookno);
 						}
 					}else if( $(this).find(".category").val() != '' ){
 						var id = $(this).closest("tr").attr("id",0);
 						var category = $(this).find(".category").val();
-						$(this).closest("tr").attr("id",saveAccountbook('','',category,date));
+						$(this).closest("tr").attr("id",saveAccountbook('','',category,date).accountbookno);
 					}
 				}
 			});	
 			
 			//가계부 db저장
 			function saveAccountbook(usage,spend,category,date){
-				var accNo; 
+				var accVo; 
 				$.ajax({
 					url : "${pageContext.request.contextPath }/accountbook/${gvo.groupNo}/saveaccountbook",
 					type : "post",
@@ -689,14 +691,14 @@ table {
 					},
 					//dataType : "json", 
 					async: false,
-					success : function(accountbookNo) {									
-						accNo = accountbookNo;
+					success : function(accountbookVo) {				
+						accVo = accountbookVo;					
 					},
 					error : function(XHR, status, error) {
 						console.error(status + " : " + error);
 					}
 				});	
-				return accNo;
+				return accVo;
 			}
 			
 			//데이터 업데이트 및 마지막 줄 선택시 새로운 라인 삽입
@@ -999,25 +1001,7 @@ table {
 			//엔터키 입력시 태그 자동 포커스 전환
 			$("#tagBody").on("keydown","#inputTag",function() {			
 				if(event.keyCode == 13){
-					var index = $(".inputTag").index(this) + 1;
-					
-					var accountbookNo = $('#hiddenAnoTag').val();
-					var tagname = $(this).val();	
-
-					var selRow = $(this).closest("div").index() + 1;
-							
-					if(tagname.trim() != ''){
-						if(selRow <= insertedTagRow){
-							var accountbooktagno = $(this).closest("div").attr("id");
-							var tagno = $(this).attr('name');
-							updateTag(accountbookNo,accountbooktagno,tagno,tagname);								
-						}else{
-							var tagVo = insertTag(accountbookNo,tagname);
-							$(this).closest("div").attr("id",tagVo.accountbooktagno);
-							$(this).attr('name',tagVo.tagno);	
-							$(this).next("[name=tagDelete]").attr("id",tagVo.tagno);
-						}
-					}
+					var index = $(".inputTag").index(this) + 1;				
 					
 					if ($('.inputTag').index(this)+1 != $('#tagBody > div').last().index()+1){
 						$(".inputTag").eq(index).focus();
@@ -1096,12 +1080,16 @@ table {
 			//카테고리 리스팅
 			function cateList(){
 				$.ajax({
-					url : "${pageContext.request.contextPath }/accountbook/${gvo.groupNo}/getcategorylist",
+					url : "${pageContext.request.contextPath }/accountbook/${gvo.groupNo}/getmodalcategorylist",
 					type : "post",
 					//contentType : "application/json",
 					//data : { },
 					//dataType : "json", 
-					success : function(cateList) {									
+					success : function(cateList) {		
+						if(cateList.length == 0){
+							cateRowInsert('');
+							cateRow=1;
+						}
 						for(var i=0;i<cateList.length;i++){
 							cateRowInsert(cateList[i]);
 						}
@@ -1190,23 +1178,7 @@ table {
 			//엔터키 입력시 카테고리 자동 포커스 전환
 			$("#categoryBody").on("keydown","#inputCategory",function() {			
 				if(event.keyCode == 13){
-					var index = $(".inputCategory").index(this) + 1;
-					
-					var categoryname = $(this).val();
-
-					var selRow = $(this).closest("div").index() + 1;
-					
-					if(categoryname.trim() != ''){
-						if(selRow <= insertedCateRow){
-							var categoryno = $(this).attr('name');
-							updateCategory(categoryno,categoryname);								
-						}else{
-							categoryNo = insertCategory(categoryname);	
-							$(this).closest("div").attr("id",categoryNo);
-							$(this).attr('name',categoryNo);	
-							$(this).next("[name=categoryDelete]").attr("id",categoryNo);
-						}
-					}
+					var index = $(".inputCategory").index(this) + 1;					
 					
 					if ($('.inputCategory').index(this)+1 != $('#categoryBody > div').last().index()+1){
 						$(".inputCategory").eq(index).focus();

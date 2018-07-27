@@ -25,6 +25,15 @@
 		<![CDATA[
 			select categoryno,categoryname
 			from category_tbl
+			where groupno=#{groupNo} or groupno is null
+			order by categoryno asc
+		]]>
+	</select>
+	
+	<select id="getModalcCtegoryList" parameterType="int" resultType="com.modu.vo.AccountbookCategoryVo">
+		<![CDATA[
+			select categoryno,categoryname
+			from category_tbl
 			where groupno=#{groupNo}
 			order by categoryno asc
 		]]>
@@ -377,5 +386,16 @@
             ,#{groupNo})
 		]]>
 	</insert>
+	
+	<select id="getRecommendCategory" parameterType="String" resultType="com.modu.vo.AccountbookCategoryVo">
+		<![CDATA[
+			select categoryno,total,categoryname
+			from (  select categoryno,sum(categoryno) total
+			        from accountbook_tbl
+			        where groupno=1 and accountbookusage=#{usage}
+			        group by categoryno) join category_tbl using (categoryno)
+			order by total desc
+		]]>
+	</select>
 
 </mapper>
