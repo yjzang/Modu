@@ -8,7 +8,7 @@
 		
 		select accountbookno,accountbookusage,accountbookspend,accountbookincome,categoryno,groupno,memberfeeno,to_char(accountbookregdate,'yyyy"년" mm"월" dd"일"') accountbookregdate
 		from accountbook_tbl
-		where groupno=#{groupNo} and accountbookregdate between #{startDate} and #{endDate}
+		where groupno=#{groupNo} and accountbookregdate between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
 		]]>
 		<if test="spendFlag == 'spend'">
 		    and accountbookincome is null
@@ -22,6 +22,15 @@
 	</select>
 	
 	<select id="getCategoryList" parameterType="int" resultType="com.modu.vo.AccountbookCategoryVo">
+		<![CDATA[
+			select categoryno,categoryname
+			from category_tbl
+			where groupno=#{groupNo} or groupno is null
+			order by categoryno asc
+		]]>
+	</select>
+	
+	<select id="getModalcCtegoryList" parameterType="int" resultType="com.modu.vo.AccountbookCategoryVo">
 		<![CDATA[
 			select categoryno,categoryname
 			from category_tbl
@@ -186,7 +195,7 @@
 			</if>
 		<![CDATA[
 			#{groupNo},
-			#{accountbookRegDate}) 
+			to_date(#{accountbookRegDate},'yyyy-MM-dd'))
 		]]>
 	</insert>
 	
@@ -215,7 +224,7 @@
 			</if>
 		<![CDATA[
 			#{groupNo},
-			#{accountbookRegDate}) 
+			to_date(#{accountbookRegDate},'yyyy-MM-dd'))
 		]]>
 	</insert>
 	
@@ -227,7 +236,7 @@
 		    accountbookusage=#{data}
 		</if>
 		<if test="updatePos == 'accountbookregdate'">
-		    accountbookregdate=#{data}
+		    accountbookregdate=to_date(#{data},'yyyy-MM-dd')
 		</if>
 		<if test="updatePos == 'accountbookspend'">
 			<if test="spendFlag == 'spend'">
@@ -279,7 +288,7 @@
 			<![CDATA[
 			,categoryno
 			from accountbook_tbl
-			where groupno=#{groupNo} and accountbookregdate between #{startDate} and #{endDate}
+			where groupno=#{groupNo} and accountbookregdate between to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
 			]]>
 			<if test="spendFlag == 'spend'">
 			    and accountbookincome is null
@@ -377,5 +386,16 @@
             ,#{groupNo})
 		]]>
 	</insert>
+	
+	<select id="getRecommendCategory" parameterType="String" resultType="com.modu.vo.AccountbookCategoryVo">
+		<![CDATA[
+			select categoryno,total,categoryname
+			from (  select categoryno,count(categoryno) total
+			        from accountbook_tbl
+			        where groupno=1 and accountbookusage=#{usage}
+			        group by categoryno) join category_tbl using (categoryno)
+			order by total desc
+		]]>
+	</select>
 
 </mapper>

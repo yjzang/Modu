@@ -3,20 +3,29 @@
 
 <mapper namespace="boardDB">
 	
-	<insert id="insert" parameterType="boardVo" >
+	<insert id="insertPost" parameterType="boardVo" >
 		<selectKey keyProperty="boardNo" resultType="string" order="BEFORE">  
 			select seq_boardNo.nextval FROM dual
 		</selectKey>
 	
 		<![CDATA[
-		insert into board_tbl(boardNo,boardTitle,boardContent,boardRegDate)
-		values(#{boardNo},#{boardTitle},#{boardContent},sysdate)	
+		insert into board_tbl(boardNo,boardTitle,boardContent,boardRegDate,tagNo,groupNo)
+		values(#{boardNo},#{boardTitle},#{boardContent},sysdate,#{tagNo},#{groupNo})	
 	       ]]>
     
 	
 	</insert>
 	
 	
+	<update id="updatePost">
+		update board_tbl 
+		set boardTitle=#{boardTitle},
+		boardContent=#{boardContent},
+		boardRegDate=sysdate,
+		tagNo=#{tagNo}
+		where boardNo=#{boardNo}
+	
+	</update>
 	
 	<insert id="insertFile" parameterType="fileVo" >
 		<selectKey keyProperty="boardImgNo" resultType="string" order="BEFORE">  
@@ -34,13 +43,25 @@
 	<select id="postCheck" parameterType="boardVo" resultType="int">
 		select count(*)
 		from board_tbl
+		where groupNo=#{groupNo}
+	</select>
+
+	
+	
+	<select id="getPostList" parameterType="integer" resultType="boardVo" >
+
+		select boardNo,boardTitle,boardContent,boardRegDate,tagNo
+		from board_tbl
+		where groupNo=#{groupNo}
+		order by boardRegdate desc
+
 	</select>
 	
-	
-	<select id="getPostList" resultType="boardVo" >
+	<select id="getPost" parameterType="integer" resultType="boardVo" >
 
-		select boardNo,boardTitle,boardContent,boardRegDate
+		select boardNo,boardTitle,boardContent,boardRegDate,tagNo
 		from board_tbl
+		where boardNo=#{boardNo}
 		order by boardRegdate desc
 
 	</select>
@@ -72,6 +93,16 @@
 	
 	<delete id="deleteCmtAll" parameterType="string">
 		delete from comment_tbl
+		where boardNo = #{boardNo}
+	</delete>
+	
+	<delete id="deleteImgAll" parameterType="string">
+		delete from board_img_tbl
+		where boardNo = #{boardNo}
+	</delete>
+	
+	<delete id="deleteLikeAll" parameterType="string">
+		delete from like_tbl
 		where boardNo = #{boardNo}
 	</delete>
 	
@@ -146,5 +177,44 @@
 	</select>
 	
 	
+	<!--  태그  -->
+	<select id="getTagList" parameterType="integer" resultType="boardVo">
+		select tagNo, tagName
+		from(select tagNo
+		from(select tagNo
+      	from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
+      	where groupNo = #{groupNo}) join tag_tbl using (tagNo) group by tagNo order by tagNo desc) join tag_tbl using (tagNo)
+     </select>
+     
+     <select id="getAccountList" parameterType="String" resultType="boardVo">
+		select tagNo,tagName, accountbookNo, accountbookUsage, to_char(accountbookRegDate,'yyyy-MM-dd') accountbookRegDate, accountbookSpend,accountbookPlace,accountbookPersonnel
+        from(select *
+        from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)) join tag_tbl using (tagNo)
+        where tagNo=#{tagNo}
+        order by accountbookRegDate desc
+     </select>
+     
+     <select id="getAccountListByDate" parameterType="boardVo" resultType="boardVo">
+		select tagNo,tagName, accountbookNo, accountbookUsage, to_char(accountbookRegDate,'yyyy-MM-dd') accountbookRegDate, accountbookSpend,accountbookPlace,accountbookPersonnel
+        from(select *
+        from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)) join tag_tbl using (tagNo)
+        where groupNo=#{groupNo}
+        and accountbookRegDate between  to_date(#{startDate},'yyyy-MM-dd') and to_date(#{endDate},'yyyy-MM-dd')
+        order by accountbookRegDate desc
+     </select>
+     
+	
+	<update id="updatePlace" parameterType="boardVo"> 
+		update accountbook_tbl 
+		set accountbookPlace=#{accountbookPlace},
+		accountbookPersonnel=#{accountbookPersonnel}
+		where accountbookNo=#{accountbookNo}
+	</update>
+	
+	<select id="getTagName" parameterType="String" resultType="string">
+		select tagName
+		from board_tbl join tag_tbl using (tagNo)
+		where boardNo=#{boardNo}
+	</select>
 	
 </mapper>

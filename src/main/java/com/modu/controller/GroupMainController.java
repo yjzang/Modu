@@ -1,16 +1,21 @@
 package com.modu.controller;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import com.modu.service.GroupMainService;
+import com.modu.vo.GroupMainVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.modu.service.ModuGroupService;
 import com.modu.vo.ModuGroupVo;
@@ -22,6 +27,8 @@ public class GroupMainController {
 
 	@Autowired
 	private ModuGroupService groupService;
+    @Autowired
+    private GroupMainService groupMainService;
 
     @RequestMapping("")
     public String GroupMain(Model model, HttpSession session,@PathVariable int groupNo){
@@ -37,6 +44,9 @@ public class GroupMainController {
         model.addAttribute("gvo",gvo);
         userVo.setGroupNo(gvo.getGroupNo());
         session.setAttribute("authUser",userVo);
+
+        Map<String,Object> map = groupMainService.getGroupMain(groupNo);
+        model.addAttribute("newsList",map.get("newsList"));
 
         return "/group/groupMain";
     }

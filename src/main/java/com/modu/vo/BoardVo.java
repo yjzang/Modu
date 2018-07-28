@@ -10,17 +10,48 @@ public class BoardVo {
 	String boardRegDate;
 	String userNo;
 	String tagNo;
-	String groupNo;
+	int groupNo;
 	String likeState;
 	String commentContent;
 	String commentNo;
 	String commentRegDate;
 	String userName;
+	String tagName;
 	int likeCount;
 	int cmtCount;
 	List<FileVo> imgList ;
+
+	String accountbookNo;
+	String accountbookUsage;
+	String accountbookRegDate;
+	String startDate;
+	String endDate;
+	String accountbookSpend;
+	String accountbookPlace;
+	String accountbookPersonnel;
+	List<BoardVo> accountList ;
 	
 	
+	
+	
+	public String getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	public String getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	public List<BoardVo> getAccountList() {
+		return accountList;
+	}
+	public void setAccountList(List<BoardVo> accountList) {
+		this.accountList = accountList;
+	}
 	public String getBoardNo() {
 		return boardNo;
 	}
@@ -52,10 +83,12 @@ public class BoardVo {
 	public void setTagNo(String tagNo) {
 		this.tagNo = tagNo;
 	}
-	public String getGroupNo() {
+
+	
+	public int getGroupNo() {
 		return groupNo;
 	}
-	public void setGroupNo(String groupNo) {
+	public void setGroupNo(int groupNo) {
 		this.groupNo = groupNo;
 	}
 	
@@ -124,14 +157,64 @@ public class BoardVo {
 		this.cmtCount = cmtCount;
 	}
 	
+	
+	public String getTagName() {
+		return tagName;
+	}
+	public void setTagName(String tagName) {
+		this.tagName = tagName;
+	}
+	public String getAccountbookNo() {
+		return accountbookNo;
+	}
+	public void setAccountbookNo(String accountbookNo) {
+		this.accountbookNo = accountbookNo;
+	}
+	public String getAccountbookUsage() {
+		return accountbookUsage;
+	}
+	public void setAccountbookUsage(String accountbookUsage) {
+		this.accountbookUsage = accountbookUsage;
+	}
+	public String getAccountbookRegDate() {
+		return accountbookRegDate;
+	}
+	public void setAccountbookRegDate(String accountbookRegDate) {
+		this.accountbookRegDate = accountbookRegDate;
+	}
+	public String getAccountbookSpend() {
+		return accountbookSpend;
+	}
+	public void setAccountbookSpend(String accountbookSpend) {
+		this.accountbookSpend = accountbookSpend;
+	}
+	
+	
+	public String getAccountbookPlace() {
+		return accountbookPlace;
+	}
+	public void setAccountbookPlace(String accountbookPlace) {
+		this.accountbookPlace = accountbookPlace;
+	}
+	public String getAccountbookPersonnel() {
+		return accountbookPersonnel;
+	}
+	public void setAccountbookPersonnel(String accountbookPersonnel) {
+		this.accountbookPersonnel = accountbookPersonnel;
+	}
 	@Override
 	public String toString() {
 		return "BoardVo [boardNo=" + boardNo + ", boardTitle=" + boardTitle + ", boardContent=" + boardContent
 				+ ", boardRegDate=" + boardRegDate + ", userNo=" + userNo + ", tagNo=" + tagNo + ", groupNo=" + groupNo
-				+ ", likeState=" + likeState + ",\n commentContent=" + commentContent + ", commentNo=" + commentNo
-				+ ", commentRegDate=" + commentRegDate + ", userName=" + userName + ", likeCount=" + likeCount
-				+ ", imgList=" + imgList + "]\n";
+				+ ", likeState=" + likeState + ", commentContent=" + commentContent + ", commentNo=" + commentNo
+				+ ", commentRegDate=" + commentRegDate + ", userName=" + userName + ", tagName=" + tagName
+				+ ", likeCount=" + likeCount + ", cmtCount=" + cmtCount + ", imgList=" + imgList + ", accountbookNo="
+				+ accountbookNo + ", accountbookUsage=" + accountbookUsage + ", accountbookRegDate="
+				+ accountbookRegDate + ", accountbookSpend=" + accountbookSpend + ", accountbookPlace="
+				+ accountbookPlace + ", accountbookPersonnel=" + accountbookPersonnel + "]";
 	}
+
+	
 	
 	
 	

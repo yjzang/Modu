@@ -14,36 +14,14 @@ public class ReportService {
     @Autowired
     ReportDao reportDao;
 
-    public boolean tmpIsNull(List<ReportVo> tmp) {
-        int count = 0;
-        for (ReportVo nullCheck : tmp) {
-            int monthNo = nullCheck.getMonthNo();
-            if (monthNo == 0) {
-                count++;
-            }
-        }
-        if (count == tmp.size()) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public String getLastDay(int year, int month) {//마지막날 구하는 함수
-        int day = 1;
-
-        Calendar calendar = Calendar.getInstance();
-
-        calendar.set(year, month - 1, day);
-        int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-        String lastDate = String.valueOf(year) + "/" + String.valueOf(month) + "/" + String.valueOf(lastDay);
-        return lastDate;
-    }
 
     public Map<String, Object> reportByPeriod(int groupNo, String fromYear, String fromMonth, String toYear, String toMonth) {
 //        카테고리 리스트 가져오기
-        List<Integer> categoryList = reportDao.getCategory(groupNo);
+    	List<Integer> categoryList = reportDao.getNonGroupCategoryList(groupNo);
+        List<Integer> categoryList2 = reportDao.getCategory(groupNo);
+        categoryList.addAll(categoryList2);
+        
+        System.out.println("카테고리 리스트 확인 : "+categoryList.toString());
         List<Object> reportListByCategory = new ArrayList<>();
         List<String> monthlySpend = new ArrayList<>();
         List<String> monthlyIncome = new ArrayList<>();
@@ -52,9 +30,10 @@ public class ReportService {
         int ty = Integer.parseInt(toYear);
         int fm = Integer.parseInt(fromMonth);
         int tm = Integer.parseInt(toMonth);
-
+        System.out.println("기간이 안나오나? "+fy+"/"+fm+"/"+ty+"/"+tm);
         if (fy == ty) {//년도가 같으면
             for (int categoryNo : categoryList) {//카테고리별로
+            	System.out.println("여기 들어오나 확인...1 카테고리번호 : "+categoryNo);
                 List<ReportVo> list = new ArrayList<>();
                 for (int i = fm; i <= tm; i++) {//시작월~끝월까지 데이터를 가져오고
                     Map<String, Object> inputMap = new HashMap<>();
@@ -64,18 +43,22 @@ public class ReportService {
                     inputMap.put("startDay", startDay);
                     inputMap.put("lastDay", lastDay);
                     inputMap.put("categoryNo", categoryNo);
+                    System.out.println("여기 들어오나 확인...2 인풋맵"+inputMap.toString());
                     ReportVo reportVo = reportDao.getReportByPeriod(inputMap);
                     if (reportVo == null) {//가져온값이 null 이면
                         reportVo = new ReportVo();//새로운객체를 생성하고
+                        System.out.println("여기 들어오나 확인...3 if문 들어옴 vo확인"+reportVo.toString());
                         reportVo.setCategoryName(reportDao.getCategoryName(categoryNo));//카테고리이름만 넣어서
                         list.add(reportVo);//리스트에 추가해라
                     } else {//가져온 값이 null이 아니면
                         list.add(reportVo);//리스트에 바로 추가해라
                     }
+                    System.out.println("여기 들어오나 확인...4 리스트 확인"+list.toString());
                 }
                 if (tmpIsNull(list)) {//리스트가 비어있지 않으면
                     reportListByCategory.add(list);//list를 추가해라
                 }
+                System.out.println("여기 들어오나 확인...5 리스트 바이 카테고리 확인"+reportListByCategory.toString());
             }
 
             for (int i = fm; i <= tm; i++) {//시작월~끝월까지
@@ -91,8 +74,11 @@ public class ReportService {
                 monthlyIncome.add(income);
                 String total = reportDao.getMonthlyTotal(inputMap);//월별 총합계를 가져와라
                 monthlyTotal.add(total);
+                System.out.println("여기 들어오나 확인...ms"+monthlySpend.toString());
+                System.out.println("여기 들어오나 확인...mi"+monthlyIncome.toString());
+                System.out.println("여기 들어오나 확인...mt"+monthlyTotal.toString());
             }
-        } else {//그렇지...않으면....
+        } else {//fromYear 과 toYear 년도가 같지 않으면
             for (int categoryNo : categoryList) {//카테고리별로
                 System.out.println("들어오냐 체크포인트 1번");
                 List<ReportVo> list = new ArrayList<>();
@@ -250,4 +236,33 @@ public class ReportService {
         outputMap.put("startPageBtnNo", startPageBtnNo);
         return outputMap;
     }
+    
+
+    public boolean tmpIsNull(List<ReportVo> tmp) {
+        int count = 0;
+        for (ReportVo nullCheck : tmp) {
+            int monthNo = nullCheck.getMonthNo();
+            if (monthNo == 0) {
+                count++;
+            }
+        }
+        if (count == tmp.size()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public String getLastDay(int year, int month) {//마지막날 구하는 함수
+        int day = 1;
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(year, month - 1, day);
+        int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        String lastDate = String.valueOf(year) + "/" + String.valueOf(month) + "/" + String.valueOf(lastDay);
+        return lastDate;
+    }
+    
 }

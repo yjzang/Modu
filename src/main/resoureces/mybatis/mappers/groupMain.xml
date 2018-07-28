@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="groupMain">
+    <select id="getNews" parameterType="map" resultType="com.modu.vo.GroupMainVo">
+        select tagNo, tagName
+from (select tagNo
+from (select *
+from tag_tbl join accountbook_tag_tbl using (tagNo)) join accountbook_tbl using (accountbookNo)
+where groupNo=#{groupNo}
+group by tagNo) join tag_tbl using (tagNo)
+where tagDate between to_date(#{startDay},'yyyy-MM-dd') and to_date(#{lastDay},'yyyy-MM-dd')
+    </select>
+
+
+</mapper>

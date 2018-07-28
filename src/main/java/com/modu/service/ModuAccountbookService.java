@@ -1,7 +1,6 @@
 package com.modu.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +26,7 @@ public class ModuAccountbookService {
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("groupNo", groupNo);
 		map.put("spendFlag", spendFlag);
+		System.out.println(month);
 		
 		Calendar cal = Calendar.getInstance();
 		int y = Integer.parseInt(month.substring(0, 4));
@@ -69,9 +69,15 @@ public class ModuAccountbookService {
 	}
 	
 	@Transactional
-	public int saveAccountbook(String usage,String spend,String category,String groupNo,String date,String spendFlag) {
+	public AccountbookVo saveAccountbook(String usage,String spend,String category,String groupNo,String date,String spendFlag) {
 		
 		AccountbookVo accountbookVo = new AccountbookVo();
+		if(!usage.equals("사용내역")) {
+			List<AccountbookCategoryVo> cateList = moduAccountbookDao.getRecommendCategory(usage);
+			if(!cateList.isEmpty()) {
+				category = String.valueOf(cateList.get(0).getCategoryNo());
+			}
+		}
 		
 		accountbookVo.setAccountbookUsage(usage);
 		accountbookVo.setAccountbookSpend(Integer.parseInt(spend));
@@ -87,8 +93,8 @@ public class ModuAccountbookService {
 		}else {
 			moduAccountbookDao.saveAccountbookIncome(accountbookVo);
 		}
-
-		return accountbookVo.getAccountbookno();
+		
+		return accountbookVo;
 	}
 	
 	@Transactional
@@ -326,4 +332,9 @@ public class ModuAccountbookService {
 		System.out.println(categoryVo.getCategoryNo());
 		return categoryVo.getCategoryNo();
 	}
+	
+	public List<AccountbookCategoryVo> getModalcCtegoryList(String groupno) {
+		return moduAccountbookDao.getModalcCtegoryList(groupno);
+	}
+	
 }

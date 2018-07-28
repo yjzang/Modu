@@ -8,6 +8,7 @@
 	 <typeAlias alias="GroupVo" type="com.modu.vo.ModuGroupVo" />
 	 <typeAlias alias="UserGroupVo" type="com.modu.vo.UserGroupVo" />
 	 <typeAlias alias="reportVo" type="com.modu.vo.ReportVo" />
+	  <typeAlias alias="MembershipVo" type="com.modu.vo.MembershipVo" />
   </typeAliases>
 
     	
@@ -17,6 +18,8 @@
 		<mapper resource="mybatis/mappers/board.xml" />
 		<mapper resource="mybatis/mappers/group.xml" />
 		<mapper resource="mybatis/mappers/report.xml" />
+		<mapper resource="mybatis/mappers/groupMain.xml" />
+		<mapper resource="mybatis/mappers/membership.xml" />
 	</mappers>
 	
 </configuration>

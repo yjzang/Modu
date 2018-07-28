@@ -14,6 +14,10 @@ public class ReportDao {
     SqlSession sqlSession;
 
 
+    public List<Integer> getNonGroupCategoryList(int groupNo){
+    	return sqlSession.selectList("report.getNonGroupCategoryList",groupNo);
+    }
+    
     public List<Integer> getCategory(int groupNo) {
         return sqlSession.selectList("report.getCategoryList",groupNo);
     }

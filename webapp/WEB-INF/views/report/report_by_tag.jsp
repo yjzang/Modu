@@ -48,7 +48,7 @@
                     <c:forEach var="pagingList" items="${pagingList}">
                         <tr>
                             <td colspan="3">
-                                <a href="/reportbytag/${crtPage}/${pagingList.tagNo}">${pagingList.tagName}</a>
+                                <a href="${pageContext.request.contextPath }/reportbytag/${crtPage}/${pagingList.tagNo}">${pagingList.tagName}</a>
                             </td>
                         </tr>
                     </c:forEach>
@@ -295,14 +295,16 @@
         console.log("asdf")
         var searchKWD = $("#searchBox").val();
         var tagNo = 0;
-
+		var flag = false;
         for (var i in availableTags) {
             if (searchKWD == availableTags[i]) {
                 tagNo = availableTagNo[i];
                 location.href = "${pageContext.request.contextPath}/reportbytag/" + ${crtPage} +"/" + tagNo;
-            } else {
-                $("#searchResult").html("검색 결과가 없습니다.");
-            }
+		        flag = true;
+            } 
+        }
+        if(flag == false){
+			$("#searchResult").html("검색 결과가 없습니다.");
         }
     });
 

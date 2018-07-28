@@ -47,7 +47,7 @@ public class BoardController {
 	    ModuGroupVo gvo = groupService.selectGroupImg(groupNo);
 		model.addAttribute("gvo",gvo);
 		
-		int postCheck= service.postCheck();
+		int postCheck= service.postCheck(groupNo);
 	    
 		if(postCheck==0) {
 			System.out.println("리스트 없음");
@@ -66,10 +66,11 @@ public class BoardController {
 	@RequestMapping(value="/getList",method= {RequestMethod.GET, RequestMethod.POST})
 	public List<BoardVo> getList(HttpSession session) {
 		
-		ModuUserVo authVo = (ModuUserVo)session.getAttribute("authUser");
-		String userNo = String.valueOf(authVo.getUserNo());
+		ModuUserVo authUser = (ModuUserVo)session.getAttribute("authUser");
+		String userNo = String.valueOf(authUser.getUserNo());
 		BoardVo boardVo = new BoardVo();
 		boardVo.setUserNo(userNo);
+		boardVo.setGroupNo(authUser.getGroupNo());
 		List<BoardVo> postList =(List<BoardVo>)service.getPostList(boardVo);
 		System.out.println(postList);
 		return postList;
@@ -99,27 +100,55 @@ public class BoardController {
 	    ModuGroupVo gvo = groupService.selectGroupImg(groupNo);
 		model.addAttribute("gvo",gvo);
 
+		List<BoardVo> tagList=service.getTagList(groupNo);
+		model.addAttribute("tagList",tagList);
+		System.out.println(tagList);
 		System.out.println("글쓰기 입장");
 		return "/board/boardWrite";
 		
 	}
 	
-	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public String addPost(  @PathVariable("groupNo") String groupNo,
+	@RequestMapping("/modifyForm/{boardNo}")
+	public String goBoardModify(Model model, @PathVariable("groupNo") int groupNo, HttpSession session,
+								 @PathVariable("boardNo") int boardNo){
+
+		// 모임 카테고리
+	    ModuUserVo uservo =  (ModuUserVo) session.getAttribute("authUser");
+		List<ModuGroupVo> gList  = groupService.selectGroup(uservo.getUserNo());
+		model.addAttribute("gList",gList);
+
+		// 클릭한 모임  가계부 보여주기
+	    ModuGroupVo gvo = groupService.selectGroupImg(groupNo);
+		model.addAttribute("gvo",gvo);
+
+		BoardVo boardVo = service.getPost(boardNo);
+		model.addAttribute("boardVo",boardVo);
+		List<BoardVo> tagList=service.getTagList(groupNo);
+		model.addAttribute("tagList",tagList);
+		System.out.println(tagList);
+		System.out.println("글수정 입장");
+		return "/board/boardMod";
+		
+	}
+	
+	@RequestMapping(value="/modify/{boardNo}",method=RequestMethod.POST)
+	public String modiPost(  @PathVariable("groupNo") int groupNo,
 			                @ModelAttribute BoardVo boardVo,
 							@RequestParam("files") MultipartFile[] files ,
 							@ModelAttribute FileVo fileVo,
+							@PathVariable("boardNo") int boardNo,
 							Model model) {
 		
-		System.out.println("글쓰기 저장 오긴 왔음");
+		System.out.println("@@@@@@글쓰기 수정 오긴 왔음"+boardVo.getAccountList()+"\n");
 		/*service.addPost(boardVo);*/
 		
-		
-
+		boardVo.setGroupNo(groupNo);
+	
+/*
 		System.out.println("컨트롤러 :" + fileVo.getUserNo());
 		System.out.println("보드VO확인용 - " + boardVo.toString());
 		System.out.println("파일VO확인용 - " + fileVo.toString());
-		System.out.println("파일 확인용 - " + fileVo.toString());
+		System.out.println("파일 확인용 - " + fileVo.toString());*/
 	/*	System.out.println("배열로 받아지는지 보자" +file.getOriginalFilename());*/
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("fileVo", fileVo);
@@ -132,6 +161,72 @@ public class BoardController {
 	
 		
 		return "redirect:/board/"+groupNo;
+		
+		
+	}
+	
+	@RequestMapping(value="/add",method=RequestMethod.POST)
+	public String addPost(  @PathVariable("groupNo") int groupNo,
+			                @ModelAttribute BoardVo boardVo,
+							@RequestParam("files") MultipartFile[] files ,
+							@ModelAttribute FileVo fileVo,
+							Model model) {
+		
+		System.out.println("@@@@@@글쓰기 저장 오긴 왔음"+boardVo.getAccountList()+"\n");
+		/*service.addPost(boardVo);*/
+		
+		boardVo.setGroupNo(groupNo);
+	
+/*
+		System.out.println("컨트롤러 :" + fileVo.getUserNo());
+		System.out.println("보드VO확인용 - " + boardVo.toString());
+		System.out.println("파일VO확인용 - " + fileVo.toString());
+		System.out.println("파일 확인용 - " + fileVo.toString());*/
+	/*	System.out.println("배열로 받아지는지 보자" +file.getOriginalFilename());*/
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("fileVo", fileVo);
+		map.put("files",files);
+		
+		service.addPost(boardVo,map);
+
+
+
+	
+		
+		return "redirect:/board/"+groupNo;
+		
+		
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/addImg/{boardNo}",method=RequestMethod.POST)
+	public List<FileVo> addImg(  @PathVariable("groupNo") int groupNo,
+							@RequestParam("files") MultipartFile[] files ,
+							@ModelAttribute FileVo fileVo,
+							@PathVariable("boardNo") String boardNo,
+							HttpSession session,
+							Model model) {
+		
+		System.out.println("@@@@@@글쓰기 저장 오긴 왔음"+files);
+		/*service.addPost(boardVo);*/
+		
+		ModuUserVo authUser = (ModuUserVo)session.getAttribute("authUser");
+		fileVo.setUserNo(String.valueOf(authUser.getUserNo()));
+		fileVo.setBoardNo(boardNo);
+		
+		
+		System.out.println("컨트롤러 :" + fileVo.getUserNo());
+		System.out.println("파일VO확인용 - " + fileVo.toString());
+		System.out.println("파일 확인용 - " + fileVo.toString());
+		System.out.println("배열로 받아지는지 보자" +files[0].getOriginalFilename());
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("fileVo", fileVo);
+		map.put("files",files);
+		
+		List<FileVo> imgList= service.addImg(map);
+	
+		
+		return imgList;
 		
 		
 	}
@@ -182,7 +277,47 @@ public class BoardController {
 		return cmtCount;
 	}
 
+	
+	@ResponseBody
+	@RequestMapping(value="/getAccountList", method=RequestMethod.POST)
+	public List<BoardVo> getAccountBook(@ModelAttribute BoardVo boardVo) {
+		
+		List<BoardVo> list = service.getAccountList(boardVo);
+		System.out.println("$$$$$$$$$ 확인하겠소--"+list);
+		return list;
+		
+	}
 
+	
+	@ResponseBody
+	@RequestMapping(value="/getAccountListByDate", method=RequestMethod.POST)
+	public List<BoardVo> getAccountBookByDate(@ModelAttribute BoardVo boardVo, @PathVariable("groupNo") int groupNo ) {
+		
+		boardVo.setGroupNo(groupNo);
+		System.out.println("$$$$$$$$$ 날짜로 불러오기 "+boardVo.getAccountbookRegDate());
+		List<BoardVo> list = service.getAccountBookByDate(boardVo);
+		return list;
+		
+	}
+
+	
+	
+	@RequestMapping("/goCal")
+	public String calendar(Model model, @PathVariable("groupNo") int groupNo
+								){
+
+	
+		return "/board/Calender2";
+		
+	}
+	@RequestMapping("/goAuto")
+	public String auto(Model model, @PathVariable("groupNo") int groupNo
+			){
+		
+		
+		return "/board/autoComplete";
+		
+	}
 
 
 }
