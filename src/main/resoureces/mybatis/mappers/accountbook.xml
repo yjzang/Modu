@@ -390,7 +390,9 @@
 	<select id="getRecommendCategory" parameterType="String" resultType="com.modu.vo.AccountbookCategoryVo">
 		<![CDATA[
 			select categoryno,total,categoryname
+
 			from (  select categoryno,count(categoryno) total
+
 			        from accountbook_tbl
 			        where groupno=1 and accountbookusage=#{usage}
 			        group by categoryno) join category_tbl using (categoryno)
