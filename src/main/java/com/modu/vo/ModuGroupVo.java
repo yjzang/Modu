@@ -12,6 +12,7 @@ public class ModuGroupVo {
 	private String groupBank;
 	private String groupAccount;
 	private String groupAccountHolder;
+
 	
 	public ModuGroupVo() {
 	}

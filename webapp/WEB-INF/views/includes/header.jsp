@@ -24,7 +24,7 @@
 
         <c:if test="${authUser ne null}">
             <%--모임 검색창--%>
-            <form class="form-inline mt-3" method="post" action="${pageContext.request.contextPath }/groupSearch">
+            <form class="form-inline mt-3" method="post" action="${pageContext.request.contextPath }/groupmain/${gvo.groupNo}/groupSearch">
                 <input class="form-control mr-sm-1 searchForm " id="searchbox" name="gSearch"
                        style="border-bottom-width: 2px; border-color: #0070c0; width: 300px;"
                        type="text" placeholder="모임을 검색하세요" aria-label="search">
@@ -90,21 +90,6 @@
                  width="70">
                 <ul class="navbar-nav icon" id="check">
 
-                        <%--나의 모임 링크--%>
-                        <%-- <c:choose>
-                            <c:when test="${gvo.groupNo ne null}">
-                                <li class="nav-item mr-0"><a class="nav-link"
-                                    href="${pageContext.request.contextPath }/groupmain?groupNo=${gvo.groupNo}"
-                                    style="font-size: 1.4em; font-weight: 800; color: #54c9ad;">나의 모임 <span class="sr-only">(current)</span>
-                                </a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li class="nav-item mr-0"><a class="nav-link" href="#"
-                                    style="font-size: 1.4em; font-weight: 800; color: #54c9ad;">나의 모임
-                                        <span class="sr-only">(current)</span>
-                                </a></li>
-                            </c:otherwise>
-                        </c:choose> --%>
 
 
 					<%--모임 리스트--%>
@@ -153,143 +138,128 @@
                                 -->
                                 <div class="collapse navbar-collapse " style="position:absolute; right:300px;">
 
-                                    <ul class="navbar-nav">
-                                            <%--메인--%>
-                                        <li id="btn_main" class="nav-item menuTab active"><a
-                                                class="nav-link"
-                                                href="${pageContext.request.contextPath }/groupmain/${gvo.groupNo}">메인
-                                            <span class="sr-only">(current)</span>
-                                        </a></li>
-                                            <%--가계부--%>
-                                        <li id="accountbook" class="nav-item menuTab"><a
-                                                class="nav-link"
-                                                href="${pageContext.request.contextPath }/accountbook/${gvo.groupNo}">가계부</a>
-                                        </li>
-                                            <%--통계(풀다운메뉴)--%>
-                                        <li class="nav-item menuTab dropdown"><a
-                                                class="nav-link dropdown-toggle" href="#"
-                                                id="navbarDropdownMenuLink" data-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false"> 통계 </a>
-                                            <div class="dropdown-menu"
-                                                 aria-labelledby="navbarDropdownMenuLink">
-                                                    <%--경로 = 최상경로/모임번호/annualreport--%>
-                                                <a id="goToReportByPeriod" class="dropdown-item" href=""
-                                                   onclick="goToReportByPeriod()">기간별 보고서</a>
-                                                <a id="goToReportByTag" class="dropdown-item" href=""
-                                                   onclick="goToReportByTag()">태그별 보고서</a>
-                                            </div>
-                                        </li>
-                                            <%--게시판--%>
-                                        <li id="btn_board" class="nav-item menuTab"><a
-                                                class="nav-link"
-                                                href="${pageContext.request.contextPath }/board/${gvo.groupNo}">게시판</a>
-                                        </li>
-                                            <%--회비관리--%>
-                                        <li class="nav-item menuTab"><a class="nav-link"
-                                                                        href="${pageContext.request.contextPath }/membershipfee/${gvo.groupNo}">회비관리</a>
-                                        </li>
-                                            <%--모임관리--%>
-                                        <li class="nav-item menuTab"><a class="nav-link"
-                                                                        href="${pageContext.request.contextPath }/groupmanage/${gvo.groupNo}">모임관리</a>
-                                        </li>
-                                    </ul>
-                                </div>
+					<ul class="navbar-nav" >
+						<%--메인--%>
+						<li id="btn_main" class="nav-item menuTab active"><a
+							class="nav-link"
+							href="${pageContext.request.contextPath }/groupmain/${gvo.groupNo}">메인
+								<span class="sr-only">(current)</span>
+						</a></li>
+						<%--가계부--%>
+						<li id="accountbook" class="nav-item menuTab"><a
+							class="nav-link"
+							href="${pageContext.request.contextPath }/accountbook/${gvo.groupNo}">가계부</a>
+						</li>
+						<%--통계(풀다운메뉴)--%>
+						<li class="nav-item menuTab dropdown"><a
+							class="nav-link dropdown-toggle" href="#"
+							id="navbarDropdownMenuLink" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false"> 통계 </a>
+							<div class="dropdown-menu"
+								aria-labelledby="navbarDropdownMenuLink">
+								<%--경로 = 최상경로/모임번호/annualreport--%>
+                                    <a id="goToReportByPeriod" class="dropdown-item" href="" onclick="goToReportByPeriod()">기간별 보고서</a>
+                                    <a id="goToReportByTag" class="dropdown-item" href="" onclick="goToReportByTag()">태그별 보고서</a>
+							</div></li>
+						<%--게시판--%>
+						<li id="btn_board" class="nav-item menuTab"><a
+							class="nav-link"
+							href="${pageContext.request.contextPath }/board/${gvo.groupNo}">게시판</a></li>
 
-                                <!-- </nav> -->
-                            </c:if>
+						<%--회비관리--%>
+						<c:choose>
+						 <c:when test="${authUser.userNo eq gvo.manager }">
+						   <c:choose>
+						   <c:when test="${empty gvo.memberFeeAmount  }">
+						     <li class="nav-item menuTab"><a class="nav-link"
+							     href="${pageContext.request.contextPath }/membershipfee/${gvo.groupNo}">회비관리</a>
+						     </li>
+						   </c:when>
+						   <c:otherwise>
+						     <li class="nav-item menuTab"><a class="nav-link"
+							     href="${pageContext.request.contextPath }/membershipfee/${gvo.groupNo}/feemanage">회비관리</a>
+						     </li>
+						   </c:otherwise>
+						   </c:choose>
+						 </c:when>
+						 <c:otherwise>
+						   <li class="nav-item menuTab"><a class="nav-link"
+							   href="${pageContext.request.contextPath }/membershipfee/${gvo.groupNo}/feemanage">회비관리</a>
+						   </li>
+						 </c:otherwise>
+						</c:choose>
 
+						<c:if test="${authUser.userNo eq gvo.manager }">
+						<%--모임관리--%>
+						<li class="nav-item menuTab"><a class="nav-link"
+							href="${pageContext.request.contextPath }/groupmanage/${gvo.groupNo}">모임관리</a></li>
+						</c:if>
 
-                            <%-- <c:forEach items="${gList }" var="gro">
-                                <li class="nav-item">
-                                    <div class="clubIcon moim">
-                                        <img
-                                            src="${pageContext.request.contextPath }/upload/${gro.groupImg}"
-                                            alt="" style="max-height: 50px; max-width: 50px;"> <br>
-                                        <a class="nav-link"
-                                            href="${pageContext.request.contextPath }/groupmain?groupNo=${gro.groupNo}"
-                                            style="font-size: 3px">${gro.groupName}</a>
-                                        <input type="hidden"  name="gImg" value="${pageContext.request.contextPath }/upload/${gro.groupImg}">
-                                <input type="hidden"  name="gName" value="${gro.groupName}" >
-                                    </div>
-                                </li>
-                            </c:forEach> --%>
+				</div>
 
-                        </c:when>
-                        <c:otherwise>
-                            <li class="nav-item">
-                                    <%-- <div class="clubIcon" onclick="" style="width: 600px;"
-                                        align="left">
-                                        <button class="t-button mb-2 " data-toggle="modal"
-                                            data-target="#exampleModalCenter01">
-                                            <img
-                                                src="${pageContext.request.contextPath }/assets/images/add.png"
-                                                alt="" style="max-height: 40px; max-width: 40px;"> <br>
-                                        </button>
-                                    </div> --%>
-                                <div class="btn-group active">
-                                    <button class="btn btn-light btn-lg dropdown-toggle"
-                                            type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" href="#"
-                                           style="font-size: 15px">&emsp;모임이없습니다.&emsp;</a>
-                                    </div>
-                                </div>
-                            </li>
-                        </c:otherwise>
-                    </c:choose>
+			<!-- </nav> -->
+		 </c:if>
 
+						</c:when>
+						<c:otherwise>
+							<li class="nav-item">
 
-                        <%--모임 추가하기 버튼--%>
-                    <!-- 	<li class="nav-item ml-0 mr-5">
+								<div class="btn-group active">
+								<button class="btn btn-light btn-lg dropdown-toggle"
+									type="button" id="dropdownMenuButton" data-toggle="dropdown"
+									aria-haspopup="true" aria-expanded="false">
+								</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<a class="dropdown-item" href="#"
+										style="font-size: 15px">&emsp;모임이없습니다.&emsp;</a>
+								</div>
+								</div>
+							</li>
+						</c:otherwise>
+					</c:choose>
 
-                        </li> -->
-                </ul>
+				</ul>
 
-            </div>
-        </nav>
+			</div>
+		</nav>
 
-
-        <%--세번째 네비바--%>
-
-    </c:if>
+	</c:if>
 </header>
 
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModalCenter01" tabindex="-1"
-     role="dialog" aria-labelledby="exampleModalCenterTitle"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content text-center">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">
-                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; <img
-                        alt="groupImg02"
-                        src="${pageContext.request.contextPath }/assets/images/groupImg02.png">&emsp;
-                    모임 정보 입력
-                </h5>
-                <button type="button" class="close" data-dismiss="modal"
-                        aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-                <center>
-            <form id="join-form" name="joinForm" method="post"
-                  action="${pageContext.request.contextPath}/plusgroup?userNo=${authUser.userNo}"
-                  enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <!-- <label for="gname1">모임 이름</label> -->
-                        <input type="text" name="groupName"
-                               class="form-control w-75 text-center" aria-label="Large"
-                               aria-describedby="inputGroup-sizing-sm" id="gname1" name="gname"
-                               placeholder="모임이름" value=""><br>
-                        <!-- <label for="gtag1">모임 설명, 해시태그</label> -->
-                        <input type="text" name="groupExplain"
-                               class="form-control w-75 text-center" aria-label="Large"
-                               aria-describedby="inputGroup-sizing-sm" id="gtag1" name="gtag"
-                               placeholder="모임설명, 해시태그" value=""><br>
+	role="dialog" aria-labelledby="exampleModalCenterTitle"
+	aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content text-center">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalCenterTitle">
+					&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; <img
+						alt="groupImg02"
+						src="${pageContext.request.contextPath }/assets/images/groupImg02.png">&emsp;
+					모임 정보 입력
+				</h5>
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="join-form" name="joinForm" method="post"
+				action="${pageContext.request.contextPath}/plusgroup"
+				enctype="multipart/form-data">
+				<center>
+					<div class="modal-body">
+						<!-- <label for="gname1">모임 이름</label> -->
+						<input type="text" name="groupName"
+							class="form-control w-75 text-center" aria-label="Large"
+							aria-describedby="inputGroup-sizing-sm" id="gname1" name="gname"
+							placeholder="모임이름" value=""><br>
+						<!-- <label for="gtag1">모임 설명, 해시태그</label> -->
+						<input type="text" name="groupExplain"
+							class="form-control w-75 text-center" aria-label="Large"
+							aria-describedby="inputGroup-sizing-sm" id="gtag1" name="gtag"
+							placeholder="모임설명, 해시태그" value=""><br>
 
                         <div class="form-group p-2 w-75" style="position: relative;">
                             <input type="file" name="file" class="custom-file-input"
@@ -304,29 +274,30 @@
                         <!-- <input type="text" class="form-control w-75" aria-label="Large" aria-describedby="inputGroup-sizing-sm" id="gcar1" name="gcar"> -->
                         <br>
 
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline1" name="groupType"
-                                   class="custom-control-input" value="1"> <label
-                                class="custom-control-label" for="customRadioInline1">계모임</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline2" name="groupType"
-                                   class="custom-control-input" value="2"> <label
-                                class="custom-control-label" for="customRadioInline2">동아리/동호회</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline3" name="groupType"
-                                   class="custom-control-input" value="3"> <label
-                                class="custom-control-label" for="customRadioInline3">친목모임</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline4" name="groupType"
-                                   class="custom-control-input" value="4"> <label
-                                class="custom-control-label" for="customRadioInline4">기타</label>
-                        </div>
-                        <div class="text-center mb-3">
-                            <br> <input class="btn btn-success" name="" type="submit"
-                                        value="모임 생성하기">
+						<div class="custom-control custom-radio custom-control-inline">
+							<input type="radio" id="customRadioInline1" name="groupType"
+								class="custom-control-input" value="1"> <label
+								class="custom-control-label" for="customRadioInline1">계모임</label>
+						</div>
+						<div class="custom-control custom-radio custom-control-inline">
+							<input type="radio" id="customRadioInline2" name="groupType"
+								class="custom-control-input" value="2"> <label
+								class="custom-control-label" for="customRadioInline2">동아리/동호회</label>
+						</div>
+						<div class="custom-control custom-radio custom-control-inline">
+							<input type="radio" id="customRadioInline3" name="groupType"
+								class="custom-control-input" value="3"> <label
+								class="custom-control-label" for="customRadioInline3">친목모임</label>
+						</div>
+						<div class="custom-control custom-radio custom-control-inline">
+							<input type="radio" id="customRadioInline4" name="groupType"
+								class="custom-control-input" value="4"> <label
+								class="custom-control-label" for="customRadioInline4">기타</label>
+						</div>
+						<input type="hidden" name="userNo" value="${authUser.userNo}">
+						<div class="text-center mb-3">
+							<br> <input class="btn btn-success" name="" type="submit"
+								value="모임 생성하기">
 
                         </div>
                     </div>

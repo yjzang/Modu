@@ -3,98 +3,115 @@
 
 <mapper namespace="report">
 
+	<select id="getNonGroupCategoryList" resultType="int">
+		select CATEGORYNO
+		from CATEGORY_TBL
+		where GROUPNO is null
+	</select>
 
-    <select id="getCategoryList" parameterType="int" resultType="int">
-        select CATEGORYNO
-        from CATEGORY_TBL
-        where GROUPNO=#{groupNo}
-    </select>
+	<select id="getCategoryList" parameterType="int" resultType="int">
+		select CATEGORYNO
+		from CATEGORY_TBL
+		where GROUPNO=#{groupNo}
+	</select>
 
-    <select id="getCategoryName" parameterType="int" resultType="String">
-        select CATEGORYNAME from CATEGORY_TBL where CATEGORYNO=#{cateNo}
-    </select>
+	<select id="getCategoryName" parameterType="int" resultType="String">
+		select CATEGORYNAME from CATEGORY_TBL where CATEGORYNO=#{cateNo}
+	</select>
 
-<select id="getReportByPeriod" parameterType="map" resultType="com.modu.vo.ReportVo">
-select CategoryNo,CategoryName,totalIncome,totalSpend,monthNo
-from (select nvl(sum(accountbookSpend),0) totalSpend , nvl(sum(accountbookIncome),0) totalIncome , CategoryNo, to_char(min(accountbookRegDate),'MM') monthNo
-      from accountbook_tbl
-        join category_tbl using (CategoryNo)
-      where category_tbl.groupNo=#{groupNo} and CategoryNo=#{categoryNo} and accountbookRegDate between #{startDay} and #{lastDay}
-      group by CategoryNo)
-  join category_tbl using (CategoryNo)
-</select>
+	<select id="getReportByPeriod" parameterType="map"
+		resultType="com.modu.vo.ReportVo">
+		select CategoryNo,CategoryName,totalIncome,totalSpend,monthNo
+		from (select nvl(sum(accountbookSpend),0) totalSpend ,
+		nvl(sum(accountbookIncome),0) totalIncome , CategoryNo,
+		to_char(min(accountbookRegDate),'MM') monthNo
+		from accountbook_tbl
+		join category_tbl using (CategoryNo)
+		where accountbook_tbl.groupNo=#{groupNo} and CategoryNo=#{categoryNo} and
+		accountbookRegDate between to_date(#{startDay},'yyyy-MM-dd') and
+		to_date(#{lastDay},'yyyy-MM-dd')
+		group by CategoryNo)
+		join category_tbl using (CategoryNo)
+	</select>
 
-    <select id="getMonthlySpend" parameterType="map" resultType="String">
-        select nvl(sum(ACCOUNTBOOKSPEND),0)
-from accountbook_tbl
-where groupNo=#{groupNo} and accountbookRegDate between #{startDay} and #{lastDay}
-    </select>
+	<select id="getMonthlySpend" parameterType="map" resultType="String">
+		select nvl(sum(ACCOUNTBOOKSPEND),0)
+		from accountbook_tbl
+		where groupNo=#{groupNo} and accountbookRegDate between
+		to_date(#{startDay},'yyyy-MM-dd') and to_date(#{lastDay},'yyyy-MM-dd')
+	</select>
 
-    <select id="getMonthlyIncome" parameterType="map" resultType="String">
-        select nvl(sum(ACCOUNTBOOKINCOME),0)
-from accountbook_tbl
-where groupNo=#{groupNo} and accountbookRegDate between #{startDay} and #{lastDay}
-    </select>
+	<select id="getMonthlyIncome" parameterType="map" resultType="String">
+		select nvl(sum(ACCOUNTBOOKINCOME),0)
+		from accountbook_tbl
+		where groupNo=#{groupNo} and accountbookRegDate between
+		to_date(#{startDay},'yyyy-MM-dd') and to_date(#{lastDay},'yyyy-MM-dd')
+	</select>
 
-    <select id="getMonthlyTotal" parameterType="map" resultType="String">
-select nvl(sum(accountbookIncome),0)-nvl(sum(accountbookSpend),0)
-from accountbook_tbl
-where groupNo=#{groupNo} and accountbookRegDate between #{startDay} and #{lastDay}
-    </select>
+	<select id="getMonthlyTotal" parameterType="map" resultType="String">
+		select nvl(sum(accountbookIncome),0)-nvl(sum(accountbookSpend),0)
+		from accountbook_tbl
+		where groupNo=#{groupNo} and accountbookRegDate between
+		to_date(#{startDay},'yyyy-MM-dd') and to_date(#{lastDay},'yyyy-MM-dd')
+	</select>
 
 
-    <select id="getRecentTag" parameterType="String" resultType="int">
-select nvl(TAGNO,0) tagNo
-from (select ROWNUM rnum, TAGNO, tagDate
-from (select tagDate, TAGNO
-from (select *
-from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
-where groupNo = #{groupNo})tmp join tag_tbl using (tagNo)
-order by tagNo desc))
-where rnum = 1
- </select>
+	<select id="getRecentTag" parameterType="String" resultType="int">
+		select nvl(TAGNO,0) tagNo
+		from (select ROWNUM rnum, TAGNO, tagDate
+		from (select tagDate, TAGNO
+		from (select *
+		from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
+		where groupNo = #{groupNo})tmp join tag_tbl using (tagNo)
+		order by tagNo desc))
+		where rnum = 1
+	</select>
 
-    <select id="getTagList" parameterType="int" resultType="com.modu.vo.ReportVo">
-select tagNo,tagName
-from (select TAGNO
-from (select tagNo
-      from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
-      where groupNo = #{groupNo}) join tag_tbl using (tagNo)
-group by tagNo) join tag_tbl using (tagNo)
-order by tagNo desc
-    </select>
+	<select id="getTagList" parameterType="int" resultType="com.modu.vo.ReportVo">
+		select tagNo,tagName
+		from (select TAGNO
+		from (select tagNo
+		from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
+		where groupNo = #{groupNo}) join tag_tbl using (tagNo)
+		group by tagNo) join tag_tbl using (tagNo)
+		order by tagNo desc
+	</select>
 
-    <select id="getAccountbookListByTag" parameterType="int" resultType="com.modu.vo.ReportVo">
-select accountbookNo,to_char(accountbookRegDate,'yyyy.MM.dd') accountbookRegdate,accountbookUsage,nvl(accountbookSpend,0)totalSpend,nvl(accountbookIncome,0)totalIncome,nvl(accountbookPersonnel,0) accountbookPersonnel,accountbookPlace
-from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
-where tagNo=#{tagNo}
-order by accountbookRegDate,accountbookNo asc
-    </select>
+	<select id="getAccountbookListByTag" parameterType="int"
+		resultType="com.modu.vo.ReportVo">
+		select accountbookNo,to_char(accountbookRegDate,'yyyy.MM.dd')
+		accountbookRegdate,accountbookUsage,nvl(accountbookSpend,0)totalSpend,nvl(accountbookIncome,0)totalIncome,nvl(accountbookPersonnel,0)
+		accountbookPersonnel,accountbookPlace
+		from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
+		where tagNo=#{tagNo}
+		order by accountbookRegDate,accountbookNo asc
+	</select>
 
-    <select id="getTotalCount" parameterType="int" resultType="int">
-        select count(*)
-from (select tagNo
-from (select *
-from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
-where groupNo = #{groupNo}) join tag_tbl using (tagNo)
-group by tagNo)
-    </select>
+	<select id="getTotalCount" parameterType="int" resultType="int">
+		select count(*)
+		from (select tagNo
+		from (select *
+		from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
+		where groupNo = #{groupNo}) join tag_tbl using (tagNo)
+		group by tagNo)
+	</select>
 
-    <select id="getTagNoList" parameterType="map" resultType="int">
-select tagNo
-from (select ROWNUM rnum,tagNo
-from (select tagNo
-from (select *
-from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
-where groupNo=#{groupNo}) join tag_tbl using (tagNo)
-group by tagNo
-order by tagNo desc))
-where rnum between #{startRnum} and #{endRnum}
-    </select>
-    <select id="getTagListForPaging" parameterType="int" resultType="com.modu.vo.ReportVo">
-select tagNo,tagName
-from tag_tbl
-where tagNo=#{tagNo}
-    </select>
+	<select id="getTagNoList" parameterType="map" resultType="int">
+		select tagNo
+		from (select ROWNUM rnum,tagNo
+		from (select tagNo
+		from (select *
+		from accountbook_tbl join accountbook_tag_tbl using (accountbookNo)
+		where groupNo=#{groupNo}) join tag_tbl using (tagNo)
+		group by tagNo
+		order by tagNo desc))
+		where rnum between #{startRnum} and #{endRnum}
+	</select>
+	<select id="getTagListForPaging" parameterType="int"
+		resultType="com.modu.vo.ReportVo">
+		select tagNo,tagName
+		from tag_tbl
+		where tagNo=#{tagNo}
+	</select>
 
 </mapper>

@@ -4,9 +4,12 @@
 <mapper namespace="group">
 	
 	<insert id="insert" parameterType="GroupVo">
+	<selectKey keyProperty="groupNo" resultType="int" order="BEFORE">
+           select seq_groupNo.NEXTVAL from dual
+        </selectKey>
 		<![CDATA[
 		insert into group_tbl(groupNo,groupName,groupExplain,groupImg,groupType,manager)
-            VALUES(seq_groupNo.NEXTVAL
+            VALUES(#{groupNo}
              ,#{groupName}
              ,#{groupExplain}
              ,#{groupImg}
@@ -17,20 +20,42 @@
 
 	<insert id="insertJoin" parameterType="UserGroupVo">
 		<![CDATA[
-		insert into user_group_tbl(user_groupNo,userNo,groupNo,joinMessage,joinState)
+		insert into user_group_tbl(user_groupNo,userNo,groupNo,joinMessage,joinState,joinDate)
             VALUES(seq_user_groupNo.NEXTVAL
              ,#{userNo}
              ,#{groupNo}
              ,#{joinMessage}
-             ,#{joinState})
+             ,#{joinState}
+             ,sysdate)
 		]]>
 	</insert>
-
+	
+	<select id="selectList" parameterType="int" resultType="UserGroupVo">
+	 <![CDATA[
+             Select user_groupNo,userNo,groupNo,joinMessage,joinState,userName
+             from user_group_tbl join user_tbl using (userNo)
+             where groupNo=#{groupNo}
+              and joinState='대기'
+             ]]>
+	</select>
+	
+	<select id="selectUserList" parameterType="int" resultType="UserGroupVo">
+	 <![CDATA[
+             Select user_groupNo,userNo,groupNo,joinMessage,joinState,userName
+             from user_group_tbl join user_tbl using (userNo)
+             where groupNo=#{groupNo}
+              and joinState='완료'
+             ]]>
+	</select>
+	
 	<select id="selectGroupList"  parameterType="int"  resultType="GroupVo">
 	 <![CDATA[
-             Select groupNo,groupName,groupExplain,groupImg,groupType,manager
-               from group_tbl
-               where manager=#{manager}
+	 
+	        select groupNo,groupName,groupExplain,groupImg,groupType,manager
+	        from user_group_tbl join group_tbl using (groupNo)
+            where userNo=#{userNo}
+            and joinState='완료'
+            
              ]]>
 	</select>
 
@@ -44,11 +69,46 @@
 
 	<select id="selectImg"  parameterType="int"  resultType="GroupVo">
 	 <![CDATA[
-             Select groupNo,groupName,groupExplain,groupImg,groupType,manager
+             Select groupNo,groupName,groupExplain,groupImg,groupType,manager,memberFeeAmount
                from group_tbl
                where groupNo=#{groupNo}
              ]]>
 	</select>
+	
+	<update id="updateJoinState" parameterType="UserGroupVo">
+	 <![CDATA[
+	     update user_group_tbl
+	     set joinState =#{joinState}
+	     where user_groupNo = #{user_groupNo}
+	  ]]>
+	</update>
+	
+	<delete id="deleteJoinState" parameterType="int">
+	 <![CDATA[
+	    delete from user_group_tbl
+	    where user_groupNo = #{user_groupNo}
+		  ]]>
+	</delete>
+	
+	<update id="updateMana" parameterType="GroupVo">
+	 <![CDATA[
+	     update group_tbl
+	     set manager =#{manager}
+	     where groupNo=#{groupNo}
+	  ]]>
+	</update>
+	
+	<update id="updateGroup" parameterType="GroupVo">
+	 <![CDATA[
+	     update group_tbl
+	     set groupName =#{groupName},
+	     groupExplain =#{groupExplain},
+	     groupImg =#{groupImg}
+	     where groupNo=#{groupNo}
+	  ]]>
+	</update>
+	
+	
 
 	
 </mapper>

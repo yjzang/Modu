@@ -26,6 +26,7 @@ public class ModuAccountbookService {
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("groupNo", groupNo);
 		map.put("spendFlag", spendFlag);
+		System.out.println(month);
 		
 		Calendar cal = Calendar.getInstance();
 		int y = Integer.parseInt(month.substring(0, 4));

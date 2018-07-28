@@ -64,9 +64,11 @@
 						</tr>
 					</thead>
 					<tbody>
+					<c:forEach items="${selectUserList }" var="sel">
+					
 
 						<tr>
-							<td scope="row">이빵아</td>
+							<td scope="row">${sel.userName}</td>
 							<td>10,000</td>
 							<td style="color:blue">완료</td>
 							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
@@ -81,71 +83,10 @@
 							<td style="color: red">미납</td>
 							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>  
 						</tr> 
+						
+					</c:forEach>
 
-						<tr>
-							<td scope="row">주데브</td>
-							<td>10,000</td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>  
-						</tr> 
-						<tr>
-							<td scope="row">노나용</td>
-							<td>10,000</td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>  
-						</tr> 
-						<tr>
-							<td scope="row">경서방</td>
-							<td>10,000</td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>  
-						</tr> 
-						<tr>
-							<td scope="row">진미채</td>
-							<td>10,000</td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color:blue">완료</td>
-							<td><img src="${pageContext.request.contextPath }/assets/images/good01.png"></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>
-							<td style="color: red">미납</td>
-							<td><button class="btn btn-sm btn-outline-secondary">확인</button></td>  
-						</tr> 
+						
 
 					</tbody>
 				</table>

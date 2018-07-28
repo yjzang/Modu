@@ -28,8 +28,21 @@
 <div class="container" >
 			
 <div class="mb-5 text-center">
-      <a href="${pageContext.request.contextPath }/board/${authUser.groupNo}/write" class="btn btn-lg btn-outline-primary" style="font-weight:bold; border:solid 2px; width:900px; ">
+      <a href="${pageContext.request.contextPath }/board/${gvo.groupNo}/write" class="btn btn-lg btn-outline-primary" style="font-weight:bold; border:solid 2px; width:900px; ">
 						총무만 할 수 있는 '새 글쓰기'		
+		</a>
+</div>
+
+			
+<div class="mb-5 text-center">
+      <a href="${pageContext.request.contextPath }/board/${gvo.groupNo}/goCal" class="btn btn-lg btn-outline-secondary" style="font-weight:bold; border:solid 2px; width:900px; ">
+						달 력 연 습
+		</a>
+</div>
+
+<div class="mb-5 text-center">
+      <a href="${pageContext.request.contextPath }/board/${gvo.groupNo}/goAuto" class="btn btn-lg btn-outline-secondary" style="font-weight:bold; border:solid 2px; width:900px; ">
+						오토 연 습
 		</a>
 </div>
 	
@@ -93,11 +106,45 @@
 						<div class="modal-body">
 
 							<form enctype="multipart/form-data" >
+								<input type="hidden" name="boardNo" id="imgBoardNo">
+								<input type="hidden" name="userNo" value="${authUser.userNo}">
 								<div class="form-group p-2" style="position: relative;">
 									<input type="file" class="custom-file-input" id="boardUpload"  multiple="multiple" onchange="loadFile(event);">
 									<label class="custom-file-label text-center pr-5" for="inputGroupFile04">이미지 업로드 &emsp;</label>
-									<div class="rounded col-2" style="float : left"><img id="addImg"  src="" class="w-100 mx-auto mt-3"></div>
+									<div id="imgPreview">
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg0"  src="" class="w-100 mx-auto mt-3">
+										</div>
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg1"  src="" class="w-100 mx-auto mt-3">
+										</div>
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg2"  src="" class="w-100 mx-auto mt-3">
+										</div>
+										<div style="clear:both;"> </div>
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg3"  src="" class="w-100 mx-auto mt-3">
+										</div>
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg4"  src="" class="w-100 mx-auto mt-3">
+										</div>
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg5"  src="" class="w-100 mx-auto mt-3">
+										</div>
+										<div style="clear:both;"> </div>
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg6"  src="" class="w-100 mx-auto mt-3">
+										</div>
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg7"  src="" class="w-100 mx-auto mt-3">
+										</div>
+										<div class="rounded col-4" style="float : left">
+											<img id="addImg8"  src="" class="w-100 mx-auto mt-3">
+										</div>
+									</div>
+								
 								</div>
+								
 							</form>
 
 							<!-- <form enctype="multipart/form-data">
@@ -109,7 +156,7 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-							<button type="button" class="btn btn-primary">추가</button>
+							<button type="button" id="btn_submit" class="btn btn-primary">추가</button>
 						</div>
 					</div>
 				</div>
@@ -145,6 +192,8 @@
 		});
 	
 		
+		
+		
 		/* 게시글 불러오기 AJAX */
 		
 		function fetchBoard(){
@@ -169,7 +218,8 @@
 								src ='${pageContext.request.contextPath}/assets/images/like_on.png';
 							} 
 							render(val,"down",src);
-							fetchComment(val.boardNo);	  
+							fetchComment(val.boardNo);
+							fetchAccount(val.boardNo,val.tagNo);
 					   });
 					  
 				  
@@ -198,7 +248,7 @@
 			  str+= "		<h4 class='card-title mt-3'>" +vo.boardTitle +"</h4>";
 			  str+= "		<div class='text-left ml-5'>" +vo.boardRegDate +"</div>";
 			  str+= "		<div class='text-right mr-5'>";
-			  str+= "			<a href='${pageContext.request.contextPath }/board/${authUser.groupNo}/write' class='btn btn-sm btn-secondary'>";
+			  str+= "			<a href='${pageContext.request.contextPath }/board/${authUser.groupNo}/modifyForm/"+vo.boardNo+"' class='btn btn-sm btn-secondary'>";
 			  str+= "			     수정	</a>	";
 			  str+= "			<button type='button' class='btn btn-sm btn-secondary' data-toggle='modal' data-target='#deleteModal'>";
 			  str+= "			     삭제	</button>";
@@ -211,7 +261,7 @@
 			  str+= "			</ol>";
 			  
 			  
-			  str+= "			<div class='carousel-inner boardImg'>";
+			  str+= "			<div class='carousel-inner boardImg' id='boardImg_"+vo.boardNo+"'>";
 			  
 			  
 			  //if(vo.imgList[0].saveName!=null){
@@ -233,8 +283,8 @@
 			  
 			  } else {					
 				  
-				  str+= "					<div class='carousel-item active' id='btn_upload'  data-toggle='modal' data-target='#boardUploadModal' style='cursor:pointer;'>";
-				  str+= "		   	 			<img class='d-block' src='${pageContext.request.contextPath }/assets/images/plus01.png' alt='First slide' style='width:100px; height:auto; margin-top:100px; margin-bottom:50px;'>";
+				  str+= "					<div class='carousel-item active' data-imgboardno='"+vo.boardNo+"' id='btn_upload'  data-toggle='modal' data-target='#boardUploadModal' style='cursor:pointer;'>";
+				  str+= "		   	 			<img class='d-block'  src='${pageContext.request.contextPath }/assets/images/plus01.png' alt='First slide' style='width:100px; height:auto; margin-top:100px; margin-bottom:50px;'>";
 				  str+= "                        <div>";
 				  str+= "                         	<h3 style='color:#50c8ef; font-weight:bold;'> 멤버들과의 추억이 담긴 사진을 올려주세요</h3>";
 				  str+= "                         	<br><br><br>";
@@ -260,7 +310,7 @@
 			  
 			  
 			  str+= "	    <div class='text-right mr-5'>";
-			  str+= "	  		 <button type='button' id='btn_upload'  class='btn btn-primary' data-toggle='modal' data-target='#boardUploadModal'>";
+			  str+= "	  		 <button type='button' id='btn_upload' data-imgboardno='"+vo.boardNo+"' class='btn btn-primary' data-toggle='modal' data-target='#boardUploadModal'>";
 			  str+= "				   사진 추가하기 	";
 			  str+= "	 		 </button>";
 			  str+= "	    </div>";
@@ -272,33 +322,28 @@
 			  str+= "	    	<pre class='card-text' id='boardContent' >"+ vo.boardContent + "</pre>";
 			  str+= "	    </div>";
 			  str+= "	    <div class='text-left my-3'>";
-			  str+= "	       <span class='p-2' style='border:#54c9ad 2px solid; border-radius: 15px; '>";
-			  str+= "	          #6월모임";
-			  str+= "	       </span>";
+			  if(vo.tagNo!=null){
+				  str+= "	       <span class='p-2' style='border:#54c9ad 2px solid; border-radius: 15px; '>";
+				  str+= "	          #"+ vo.tagName+ "";
+				  str+= "	       </span>";
+			  }
 			  str+= "	    </div>";
 			  str+= "	    <div>";
 			  str+= "	      <table class='table table-sm text-center'>";
 			  str+= "	         <thead class='thead-light'>";
 			  str+= "	  	       <tr>";
-			  str+= "	    	     <th scope='col'></th>";
 			  str+= "	   		     <th scope='col'>날짜</th>";
 			  str+= "	   		     <th scope='col'>사용내역</th>";
-			  str+= "	    	     <th scope='col'>금액</th>";
-			  str+= "	   		     <th scope='col'>분류</th>";
-			  str+= "	     	     <th scope='col'>태그</th>";
+			  str+= "	    	     <th scope='col' style='font-size:14pt;'>금액(원)</th>";
+			  str+= "	     	     <th scope='col' style='font-size:14pt;'>인원(명)</th>";
+			  str+= "	   		     <th scope='col'>장소</th>";
+			  str+= "	     	     <th scope='col'>지도</th>";
 			  str+= "	  	       </tr>";
 			  str+= "	         </thead>";
-			  str+= "	         <tbody>";
-			  str+= "	           <tr>";
-			  str+= "	   			  <th scope='row'>";
-			  str+= "	  			      <input width=40px type='checkbox' aria-label='Checkbox for following text input'>";
-			  str+= "	  			  </th>";
-			  str+= "	  			  <td>2018/06/28</td> <td>삼겹살</td>  <td>150000</td> <td>식비</td> <td>#6월모임</td>";
-			  str+= "	  		   </tr> ";
-			  str+= "	  		   <tr> ";
-			  str+= "					 <th scope='row'>	<input type='checkbox' aria-label='Checkbox for following text input'>	</th>";
-			  str+= "	   				 <td>2018/06/28</td><td>소주한잔</td><td>77000</td><td>식비</td><td>#6월모임</td>";
-			  str+= "	           </tr>";
+			  str+= "	         <tbody id='accountList_"+vo.boardNo+"'>";
+			  
+			  str+=	" <td colspan='8' style='color:gray;' id='accDefault_"+vo.boardNo+"'>가계부가 첨부되지 않았습니다.</td>"	
+			  
 			  str+= "	         </tbody>";
 			  str+= "	      </table>";
 			  str+= "	    </div>";
@@ -308,7 +353,7 @@
 			  str+= "	    <div class='card-footer p-1'> ";
 			  str+= "	    	<div class='text-left my-2'>";
 			  str+= "	   			<span>";
-			  str+= "	 				  <button class='t-button p-1 ml-2'> <img id='like_"+vo.boardNo+"' data-likeno='"+vo.boardNo+"' width=50px src='"+src+"' data-state='"+vo.likeState+"'> </button>";
+			  str+= "	 				  <button class='t-button p-1 ml-2'> <img id='like_"+vo.boardNo+"' data-likeno='"+vo.boardNo+"' width=50px src='"+src+"' data-state='"+(vo.likeState==null?0:vo.likeState)+"'> </button>";
 			  str+= "	  			</span>";
 			  str+= "	    		<span id='likeCount_"+vo.boardNo+"' class='ml-2'>";
 			  str+= "	  				"+vo.likeCount+"명의 회원이 좋아합니다.";
@@ -350,7 +395,203 @@
 				  
 		}
 			  
+		/*  사진추가 할때 보드 넘버 첨부하기 */
+		$(document).on('click','div [data-imgboardno]', function(){
+			
+			var boardNo= $(this).data('imgboardno');
+			console.log(boardNo);
+			$("#imgBoardNo").val(boardNo);
+			for(var k=0; k<9 ;k++){
+				addImg[k]= document.getElementById('addImg'+k);
+				addImg[k].src='';	
+				$("#boardUpload").val('');
+			}
+			
+		});
+			 
+		/*  이미지 미리보기 , 확장자 체크  */		
+		var up_files = {};
+		var loadFile = function(event) {
+			
+			
+			var addImg = new Array();
+			
+			for(var k=0; k<9 ;k++){
+				addImg[k]= document.getElementById('addImg'+k);
+				addImg[k].src='';	
+			}
+			
+			if(event.target.files.length>9){
+				
+				alert("이미지는 한번에 9개까지만 등록 가능합니다.")
+				
+			} else{
+			
+				for(var i=0;i<event.target.files.length; i++ ){
+					$("#imgPreview").show();
+					$("#addImg"+i).show();
+					addImg[i]= document.getElementById('addImg'+i);
+					addImg[i].src = URL.createObjectURL(event.target.files[i]);
+					var fileName= new Array();
+					var file = event.target.files[i];
+					up_files[i] = file;
+					fileName[i] = event.target.files[i].name;
+					fileName[i] = fileName[i].slice(fileName[i].indexOf(".") + 1).toLowerCase();
+					console.log(fileName[i]);
+					
+					if(fileName[i] != "jpg" && fileName[i] != "png" &&  fileName[i] != "gif" &&  fileName[i] != "bmp"){
+						
+						alert("이미지 파일은 (jpg, png, gif, bmp) 형식만 등록 가능합니다.");
+						$("#boardUpload").val('');
+						$("#imgPreview").hide();
+						return false;
+						/*$('#boardUploadModal').modal('hide');*/
+			
+					} else{
+						
+					}
+				 }
 
+			}
+		};
+			  
+		
+		
+	/* 사진추가 aJAX  */
+	 $('#btn_submit').on('click',function() {                        
+                var form = $('#boardUpload')[0];
+                console.log("##4341"+form);
+                var formData = new FormData(form);
+    
+                for (var index = 0; index < Object.keys(up_files).length; index++) {
+                    //formData 공간에 files라는 이름으로 파일을 추가한다.
+                    //동일명으로 계속 추가할 수 있다.
+                    formData.append('files',up_files[index]);
+                }	
+                var userNo = ${authUser.userNo};
+    			var boardNo = $("#imgBoardNo").val();
+			
+			$.ajax({
+                type : 'POST',
+                enctype : 'multipart/form-data',
+                processData : false,
+                contentType : false,
+                cache : false,
+                timeout : 600000,
+                url : '${pageContext.request.contextPath}/board/${authUser.groupNo}/addImg/'+boardNo,
+                dataType : 'JSON',
+                data : formData,
+                success : function(list) {
+                    //이 부분을 수정해서 다양한 행동을 할 수 있으며,
+                    //여기서는 데이터를 전송받았다면 순수하게 OK 만을 보내기로 하였다.
+                    //-1 = 잘못된 확장자 업로드, -2 = 용량초과, 그외 = 성공(1)
+                 /*    if (result === -1) {
+                        alert('jpg, gif, png, bmp 확장자만 업로드 가능합니다.');
+                        // 이후 동작 ...
+                    } else if (result === -2) {
+                        alert('파일이 10MB를 초과하였습니다.');
+                        // 이후 동작 ...
+                    } else { 
+                        alert('이미지 업로드 성공'); */
+                        renderImg(list,boardNo);
+						$("#boardUploadModal").modal('hide');
+                    
+                }
+                //전송실패에대한 핸들링은 고려하지 않음
+            });
+		  
+	 });
+			  
+	
+	/* 사진 추가 그리기 함수 */
+	
+	function renderImg(list,boardNo){
+	      str= "";
+		  str+= "					<div class='carousel-item active'>";
+		  str+= "		   	 			<img class='d-block' src='${pageContext.request.contextPath }/upload/"+ list[0].saveName+"' alt='First slide'>"; 
+		  str+= "					</div>";
+		  
+			  for(i=1; i < list.length; i++){
+				  
+				  
+				  str+= "			<div class='carousel-item' >";
+				  str+= "				<img class='d-block' src='${pageContext.request.contextPath }/upload/"+ list[i].saveName+"' alt='Second slide'>"; 
+				  str+= "			</div>";
+				  
+				  
+				  
+		  }
+			  
+		  $("#boardImg_"+boardNo).empty();
+		  $("#boardImg_"+boardNo).append(str);
+			  
+	}
+		/* 가계부 ajax */ 
+		
+		function fetchAccount(boardNo,tagNo){
+			
+			
+			$.ajax({
+				  
+				  url : "${pageContext.request.contextPath}/board/${authUser.groupNo}/getAccountList",
+				  type : "POST",
+				  data : {tagNo: tagNo},
+				  dataType : "json", 
+				 
+				  success : function(list){
+					  
+				      if(list.length!=0){
+				    	  
+				    	  console.log("!!"+list.length);
+				      
+				    	  $.each(list, function(idx, val) {
+				    		 
+				    	  		
+								renderAccount(val,"down",boardNo);
+						   });
+				      }					  
+				  
+				  },
+				  
+				  error : function(XHR, status, error){
+					 console.error(XHR+status+error);
+				  }
+				  
+			  });
+		
+		
+		}
+		
+		/* 가계부 그리기 */ 
+		
+		function renderAccount(vo,updown,boardNo){
+			  str= " ";
+			
+			  str+= "	    	 <tr id='delAcc_"+vo.accountbookNo+"'>";
+			  str+= "				<input type='hidden' name='accountList["+i+"].accountbookNo' val='"+vo.accountbookNo+"' >";
+			  str+= "						<td style='width:160px;'>"+vo.accountbookRegDate+"</td>";
+			  str+= "						<td id='accUsage_"+vo.accountbookNo+"'>"+vo.accountbookUsage+"</td>";
+			  str+= "						<td>"+vo.accountbookSpend+"</td>";
+			  str+= "						<td style='width:80px;'>"+((vo.accountbookPersonnel!=null)?vo.accountbookPersonnel:'')+"</td>"; 
+			  str+= "						<td>"+((vo.accountbookPlace!=null)?vo.accountbookPlace:'')+"</td>";
+			  str+= "						<td><button type='button' class='btn t-button p-0' data-toggle='modal' data-target='#mapModal'><img src='${pageContext.request.contextPath }/assets/images/mapIcon.png'></button></td>";
+			
+			  str+= "			</tr>";
+			  
+			
+			  
+			  if(updown=="up"){
+				  
+				  $("#accountList_"+boardNo).prepend(str);
+				  
+			  } else{
+				  
+			  	  $("#accDefault_"+boardNo).remove();
+				  $("#accountList_"+boardNo).append(str);
+			  }
+			
+			
+		}
 			  
 		/* 댓글 등록 이벤트 */
 		$("div").on('click','button[data-writeno]',function(){
@@ -524,7 +765,6 @@
 		
 		$("div").on('click',"img[data-likeno]",function(){
 
-			
 			var likeState = $(this).data("state");
 			var boardNo = $(this).data("likeno");
 			var src= $("[data-likeno="+boardNo+"]").attr("src");
@@ -597,6 +837,7 @@
 					
 						  remove(boardNo);
 						  $("#deleteModal").modal('hide');
+						  alert("삭제되었습니다.");
 					
 											
 				  },
@@ -642,7 +883,7 @@
 						 
 						if(cmtCount!=-1){
 							
-							  alert("삭제되었습니다.");
+							  /* alert("삭제되었습니다."); */
 							  $("#cmtList_"+boardNo).empty();
 							  fetchComment(boardNo);
 							  $("#cmtCount_"+boardNo).text("댓글 " +cmtCount+"개");
@@ -683,30 +924,7 @@
 		});   
 
 
-		/*  이미지 미리보기 , 확장자 체크  */		
-
-		var loadFile = function(event) {
-			var addImg = document.getElementById('addImg');
-			addImg.src = URL.createObjectURL(event.target.files[0]);
-			
-			var fileName = event.target.files[0].name;
-			 
-			fileName = fileName.slice(fileName.indexOf(".") + 1).toLowerCase();
-			
-			if(fileName != "jpg" && fileName != "png" &&  fileName != "gif" &&  fileName != "bmp"){
-
-				alert("이미지 파일은 (jpg, png, gif, bmp) 형식만 등록 가능합니다.");
-
-				$("#boardUpload").val('');
-				$("#addImg").hide();
-				
-				/*$('#boardUploadModal').modal('hide');*/
-				
-			} else{
-				$("#addImg").show();
-			}
-
-		};
+	
 
 		/*  navbar 스크롤 제어  */
 

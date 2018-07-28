@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="membership">
+
+<insert id="insertMembership" parameterType="GroupVo">
+	<selectKey keyProperty="groupNo" resultType="int" order="BEFORE">
+           select seq_groupNo.NEXTVAL from dual
+        </selectKey>
+		<![CDATA[
+		insert into group_tbl(groupNo,memberFeeAmount,memberFeeDate,groupBank,groupAccount,groupAccountHolder)
+            VALUES(#{groupNo}
+             ,#{memberFeeAmount}
+             ,#{memberFeeDate}
+             ,#{groupBank}
+             ,#{groupAccount}
+             ,#{groupAccountHolder})
+		]]>
+	</insert>
+	
+	
+<insert id="insertPayment" parameterType="MembershipVo">
+
+       <![CDATA[
+		    insert into memberfee_tbl()
+		    VALUES(seq_membershipfeeNo.NEXTVAL
+		     ,#{user_groupNo}
+             ,#{paymentFee}
+             ,#{paymentDate})
+        ]]>
+
+</insert>
+
+<select id="selectImg"  parameterType="int"  resultType="GroupVo">
+	 <![CDATA[
+             Select groupNo,memberFeeAmount,memberFeeDate,groupBank,groupAccount,groupAccountHolder
+               from group_tbl
+               where groupNo=#{groupNo}
+             ]]>
+	</select>
+
+	
+	
+</mapper>

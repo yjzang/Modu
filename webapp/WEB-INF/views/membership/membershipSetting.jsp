@@ -33,112 +33,90 @@
          <div class="card-header text-white bg-info mb-3 text-left">
           <div class="float-left custom-control custom-checkbox">
             <input type="checkbox" class="custom-control-input" id="checkall">
-            <label class="custom-control-label" for="checkall">&nbsp;</label>
+            <label class="custom-control-label" for="checkall">&ensp;&ensp;&ensp;이름</label>
           </div>
-          &ensp;이름
+          &ensp;
         </div>
         <ul class="list-group list-group-flush">
          <li class="list-group-item mt-0 pt-0">
+         <form action="${pageContext.request.contextPath }/membershipfee/${authUser.groupNo}/setting" name="form" >
+        <c:forEach items="${selectUserList }" var="checkList" varStatus="status">
           <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck1" name="chk">
-            <label class="custom-control-label" for="customCheck1">&ensp;이빵아</label>
+            <input type="checkbox" class="custom-control-input" id="${status.count}" name="userName" value="${checkList.userNo}">
+            <label class="custom-control-label" for="${status.count}">&ensp;${checkList.userName}</label>
           </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck2" name="chk">
-            <label class="custom-control-label" for="customCheck2">&ensp;주데브</label>
-          </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck3" name="chk">
-            <label class="custom-control-label" for="customCheck3">&ensp;노나용</label>
-          </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck4" name="chk">
-            <label class="custom-control-label" for="customCheck4">&ensp;경서방</label>
-          </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck5" name="chk">
-            <label class="custom-control-label" for="customCheck5">&ensp;진미채</label>
-          </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck6" name="chk">
-            <label class="custom-control-label" for="customCheck6">&ensp;울막내</label>
-          </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck7" name="chk">
-            <label class="custom-control-label" for="customCheck7">&ensp;자손데브</label>
-          </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck8" name="chk">
-            <label class="custom-control-label" for="customCheck8">&ensp;사람1</label>
-          </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck9" name="chk">
-            <label class="custom-control-label" for="customCheck9">&ensp;사람2</label>
-          </div>
-          <div class="text-left custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="customCheck10" name="chk">
-            <label class="custom-control-label" for="customCheck10">&ensp;사람3</label>
-          </div>
+        </c:forEach>
+     
         </ul>
       </div>
     </div>
   </td>
   <td style="width: 45rem">
-
    <center>
+   <!-- 납부금액 정하기  -->
      <div class="text-center mr-5">
        <img src="${pageContext.request.contextPath }/assets/images/tuto02.png">
      </div>
-     <form class="form-inline mb-3" style="margin-left: 120px">
-      <div class="form-group mx-3 mb-2" align="center">
+     <div class="form-inline mb-3" style="margin-left: 120px" >
+     <!--  <div class="form-group mx-3 mb-2" align="center"> -->
+      <li>
        <label for="inputPassword2" class="font-weight-blod">납부금액 </label>
-       <input type="text" class="form-control w-75 text-right" aria-label="Large" aria-describedby="inputGroup-sizing-sm" id="inputPassword2" placeholder="0"><br>
-     </div>
-     <button type="button" class="btn btn-outline-info  mr-3">+만원</button>
-     <button type="button" class="btn btn-outline-info ">+천원</button>
-
-   </form>
+      </li>
+      <li>
+       <input type="text" name="memberFeeAmount" value="" class="form-control w-75 text-right" aria-label="Large" aria-describedby="inputGroup-sizing-sm"
+        id="inputPassword2" placeholder="0" numberOnly><br>
+     </li>
+     <!-- </div> -->
+     <div class="plus">
+     <input type="button" class="btn btn-outline-info  mr-3" onclick="change(10000);"  value="+만원">
+     <input type="button" class="btn btn-outline-info " onclick="change(1000);" value="+천원">
+     </div> 
+    </div>
+    <!-- 입금계좌  -->
    <li>
      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">입금계좌</label>
    </li>
    <li>
-     <form class="form-block w-75">
-      <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+     <div class="form-block w-75">
+      <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="groupBank" style="width: 110px"> 
        <option selected>은행</option>
-       <option value="1">KB국민</option>
-       <option value="2">신한</option>
-       <option value="3">우리</option>
-       <option value="4">KEB하나</option>
-       <option value="5">케이뱅크</option>
-       <option value="6">카카오뱅크</option>
-       <option value="7">NH농협</option>
-       <option value="8">수협</option>
-       <option value="9">대구</option>
-       <option value="10">BNK부산</option>
-       <option value="11">BNK경남</option>
-       <option value="12">광주</option>
-       <option value="13">전북</option>
-       <option value="14">제주</option>
+       <option value="KB국민">KB국민</option>
+       <option value="신한">신한</option>
+       <option value="우리">우리</option>
+       <option value="KEB하나">KEB하나</option>
+       <option value="케이뱅크">케이뱅크</option>
+       <option value="카카오뱅크">카카오뱅크</option>
+       <option value="NH농협">NH농협</option>
+       <option value="수협">수협</option>
+       <option value="대구">대구</option>
+       <option value="BNK부산">BNK부산</option>
+       <option value="BNK경남">BNK경남</option>
+       <option value="광주">광주</option>
+       <option value="전북">전북</option>
+       <option value="제주">제주</option>
      </select>
+   </div>  
    </li>
    <li>
      <img src="${pageContext.request.contextPath }/assets/images/tuto03.png" class="mb-3">
    </li>
+  <!-- 계좌번호  와 예금주명-->
    <div class="col-auto my-2">
     <label class="sr-only" for="">계좌번호</label>
-    <input type="text" class="form-control w-50 text-center" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="계좌번호">
+    <input type="text" name="groupAccount" id=inputBox class="form-control w-50 text-center" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="계좌번호">
   </div>
   <div class="col-auto my-2">
     <label class="sr-only" for="">예금주명</label>
-    <input type="text" class="form-control w-50 text-center" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="예금주명">
+    <input type="text" name="groupAccountHolder" class="form-control w-50 text-center" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="예금주명">
   </div>
   <div>
+  
    <li>
      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">납부일자</label>
    </li>
    <li>
     <!-- <form class="form-block w-100" > -->
-     <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+     <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="memberFeeDate">
       <option selected>일</option>
       <option value="1">1일</option>
       <option value="2">2일</option>
@@ -180,20 +158,20 @@
  </li>
  <li>
   <!-- <form class="form-block w-100" > -->
-   <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+   <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="memberFeeinterval">
     <option selected>월</option>
-    <option value="1">1월</option>
-    <option value="2">2월</option>
-    <option value="3">3월</option>
-    <option value="4">4월</option>
-    <option value="5">5월</option>
-    <option value="6">6월</option>
-    <option value="7">7월</option>
-    <option value="8">8월</option>
-    <option value="9">9월</option>
-    <option value="10">10월</option>
-    <option value="11">11월</option>
-    <option value="12">12월</option>
+    <option value="1">1개월</option>
+    <option value="2">2개월</option>
+    <option value="3">3개월</option>
+    <option value="4">4개월</option>
+    <option value="5">5개월</option>
+    <option value="6">6개월</option>
+    <option value="7">7개월</option>
+    <option value="8">8개월</option>
+    <option value="9">9개월</option>
+    <option value="10">10개월</option>
+    <option value="11">11개월</option>
+    <option value="12">12개월</option>
   </select>
   <li>
     <label class="my-1 mr-2" for="inlineFormCustomSelectPref">마다</label>
@@ -203,7 +181,7 @@
   </li>
 </div>
 <div>
-  <button type="button" class="btn btn-secondary btn-lg mt-5" onclick="location.href='${pageContext.request.contextPath }/membershipfee/${gvo.groupNo}/feemanage'">&ensp;&ensp;설정하기&ensp;&ensp;</button>
+  <input type="submit" class="btn btn-secondary btn-lg mt-5" value="&ensp;&ensp;설정하기&ensp;&ensp;" >
 </div>
 </form>
 </center>
@@ -224,6 +202,82 @@
 	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<script src="${pageContext.request.contextPath }/assets/js/bootstrap.js"></script>
 	<script src="${pageContext.request.contextPath }/assets/js/header.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.js"></script> 
+<script type="text/javascript">
+
+/* 체크박스 전체 클릭  */
+$(document).ready(function(){
+    //최상단 체크박스 클릭
+    $("#checkall").click(function(){
+        //클릭되었으면
+        if($("#checkall").prop("checked")){
+            //input태그의 name이 userName인 태그들을 찾아서 checked옵션을 true로 정의
+            $("input[name=userName]").prop("checked",true);
+            //클릭이 안되있으면
+        }else{
+            //input태그의 name이 userName인 태그들을 찾아서 checked옵션을 false로 정의
+            $("input[name=userName]").prop("checked",false);
+        }
+    })
+})
+
+</script>
+<script type="text/javascript">
+/* 세자리마다 콤마, 숫자입력만 가능 */
+
+//3자리 단위마다 콤마 생성
+function addCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+ 
+//모든 콤마 제거
+function removeCommas(x) {
+    if(!x || x.length == 0) return "";
+    else return x.split(",").join("");
+}
+ 
+$("input:text[numberOnly]").on("keyup", function() {
+	
+    $(this).val(addCommas($(this).val().replace(/[^0-9]/g,"")));
+});
+
+
+<!-- 버튼 클릭시 값 증가  --> //멘붕.. 동시에 안..
+
+ function change(num){
+	 var x = document.form;
+	 var y = Number(x.memberFeeAmount.value) + num;
+	 if(y < 1) y = 1;
+	   x.memberFeeAmount.value = y;
+ }
+ 
+ 
+ /*  특수문자 - 과 숫자만 입력가능 
+ function nCheck(){
+     var numCheck = document.getElementById("numCheck");
+     if(/[^0123456789-]/g.test(numCheck.value)){
+    	 $("#checkCheck").html("특수문자 - 과 숫자만 입력가능합니다");
+         $("#checkCheck").css("color", "red");
+     }else{
+    	 $("#checkCheck").html("올바릅니다.");
+     }
+ }
+ 
+ $('#inputBox').keypress(function (event) { 
+ if (event.which && (event.which <= 47 || event.which >= 58) && event.which != 8) {
+	 event.preventDefault(); 
+	 } 
+ }); */
+
+
+ 
+	
+	 
+		
+
+</script>
+
+
 
 
 </body>
