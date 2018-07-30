@@ -27,7 +27,7 @@ import com.modu.vo.ModuUserVo;
 @RequestMapping("/board/{groupNo}")
 public class BoardController {
 
-	
+	 
 	@Autowired
 	BoardService service;
 	@Autowired

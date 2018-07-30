@@ -21,7 +21,7 @@ public class ReportController {
     @Autowired
     ModuGroupService groupService;
 
-
+ 
     @RequestMapping(value = "/reportbyperiod/{groupNo}/{fromYear}/{fromMonth}/{toYear}/{toMonth}", method = RequestMethod.GET)
     public String reportByPeriod(@PathVariable String fromYear, @PathVariable String fromMonth, @PathVariable String toYear, @PathVariable String toMonth, @PathVariable int groupNo, Model model, HttpSession session) {
         //모임 카테고리

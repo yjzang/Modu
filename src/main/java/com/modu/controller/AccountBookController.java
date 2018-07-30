@@ -34,8 +34,8 @@ import com.modu.vo.ModuUserVo;
 
 @Controller
 @RequestMapping(value="/accountbook/{groupNo}")
-public class AccountBookController {
-
+public class AccountBookController  { 
+   
 	@Autowired
 	private ModuUserService moduUserService;	
 	@Autowired

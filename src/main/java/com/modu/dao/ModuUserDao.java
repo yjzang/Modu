@@ -30,7 +30,7 @@ public class ModuUserDao {
 	public int emailCheckAjax(String email) {
 		return sqlSession.selectOne("user.emailCheckAjax",email);
 	}
-
+ 
 	public ModuUserVo userLoginCheck(Map<String, Object> map) {
 		System.out.println("유저로그인체크"+map.toString());
 		ModuUserVo userVo = sqlSession.selectOne("user.userLoginAvailableCheck",map);

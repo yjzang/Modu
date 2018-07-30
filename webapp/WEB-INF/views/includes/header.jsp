@@ -21,7 +21,7 @@
                 src="${pageContext.request.contextPath }/assets/images/logo1.png"
                 width="168" height="72" alt="모두의 가계부">
         </a>
-
+ 
         <c:if test="${authUser ne null}">
             <%--모임 검색창--%>
             <form class="form-inline mt-3" method="post" action="${pageContext.request.contextPath }/groupmain/${gvo.groupNo}/groupSearch">

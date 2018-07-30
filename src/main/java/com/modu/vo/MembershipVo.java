@@ -9,7 +9,7 @@ public class MembershipVo {
 	private int paymentamont; // 납부액 
 	private String paymentDay; // 납부일 
 	
-	
+	 
 	public MembershipVo() {
 	}
 	public MembershipVo(int membershipfeeNo, int user_groupNo, int paymentFee, String paymentDate, int paymentamont,

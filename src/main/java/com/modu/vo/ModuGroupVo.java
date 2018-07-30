@@ -13,7 +13,7 @@ public class ModuGroupVo {
 	private String groupAccount;
 	private String groupAccountHolder;
 
-	
+	 
 	public ModuGroupVo() {
 	}
 

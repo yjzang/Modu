@@ -12,7 +12,7 @@ public class ModuUserVo {
 
 	public ModuUserVo() {
 		
-	}
+	} 
 
 	public ModuUserVo(int userNo, String userEmail, String userPassword, String userName, String userBirthday, int groupNo) {
 		this.userNo = userNo;

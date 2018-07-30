@@ -13,7 +13,7 @@ public class ReportVo {
     private String categoryName;
     //어카운트북_태그 테이블
 //    private int accountbookTagNo;
-    //어카운트북 테이블
+    //어카운트북 테이블 
     private int accountbookNo;
     private String accountbookRegdate;
     private String accountbookUsage;

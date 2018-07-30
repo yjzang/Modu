@@ -22,7 +22,7 @@ import com.modu.vo.UserGroupVo;
 @Controller
 //@RequestMapping(value="/groupmanage/{groupNo}")
 public class GroupManageController {
-
+ 
 	@Autowired
 	private ModuGroupService groupService;
 

@@ -20,7 +20,7 @@ public class ReportService {
     	List<Integer> categoryList = reportDao.getNonGroupCategoryList(groupNo);
         List<Integer> categoryList2 = reportDao.getCategory(groupNo);
         categoryList.addAll(categoryList2);
-        
+         
         System.out.println("카테고리 리스트 확인 : "+categoryList.toString());
         List<Object> reportListByCategory = new ArrayList<>();
         List<String> monthlySpend = new ArrayList<>();

@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic" rel="stylesheet">
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css">
 
-</head>
+</head> 
 
 <style type="text/css">
 

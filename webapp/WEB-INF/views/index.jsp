@@ -24,7 +24,7 @@
 <body style="overflow-x:hidden; overflow-y:auto;">
 </c:if>
 <c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
-
+ 
 <!----------------- container------------------->
 <div class="container">
 

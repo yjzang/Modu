@@ -17,7 +17,7 @@
   <c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
 
 	<div class="container">
-
+ 
 		<center>
 			<div class="feemanage col-8 mt-5">
 				<table class="table table-sm table-light border text-center">

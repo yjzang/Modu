@@ -15,7 +15,7 @@ public class BoardVo {
 	String commentContent;
 	String commentNo;
 	String commentRegDate;
-	String userName;
+	String userName; 
 	String tagName;
 	int likeCount;
 	int cmtCount;

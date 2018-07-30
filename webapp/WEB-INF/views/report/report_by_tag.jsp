@@ -22,7 +22,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic" rel="stylesheet">
     <%--<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath }/assets/jquery/jquery.autocomplete.css" />--%>
 
-</head>
+</head> 
 
 <link style="overflow-x:hidden; overflow-y:auto;">
 
