@@ -15,7 +15,7 @@
 
 <!-----------header------------------>
   <c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
-  
+   
   <div class="container">
 		<div class="text-center mt-5 searchresult">		      
 		<h3>‘${param.gSearch}’ 으(로) 검색한 결과입니다.</h3>

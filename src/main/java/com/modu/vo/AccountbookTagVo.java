@@ -8,7 +8,7 @@ public class AccountbookTagVo {
 
 	public AccountbookTagVo() {
 
-	}
+	} 
 
 	public AccountbookTagVo(int accountbooktagno, int accountbookno, int tagno, String tagname) {
 		super();

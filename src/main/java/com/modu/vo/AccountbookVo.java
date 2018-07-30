@@ -14,7 +14,7 @@ public class AccountbookVo {
 
 	public AccountbookVo() {
 
-	}
+	} 
 	
 	public AccountbookVo(String accountbookRegDate, String accountbookUsage, int accountbookSpend,
 			int accountbookIncome, int categoryNo, String categoryName, int groupNo, int tagNo, String tagName) {

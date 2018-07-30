@@ -15,7 +15,7 @@
 	<link rel="stylesheet" href="${pageContext.request.contextPath }/assets/css/daterangepicker.min.css">
 
 <style>
-
+ 
 /* AutoComplete */
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
 .autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; cursor: pointer; }

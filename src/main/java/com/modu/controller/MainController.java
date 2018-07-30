@@ -22,7 +22,7 @@ public class MainController{
 
 	@Autowired
     private ModuGroupService groupService;
-
+ 
 
 	@RequestMapping( "/main")
 	public String hello(Model model,HttpSession session){

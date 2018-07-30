@@ -25,7 +25,7 @@
 	</div>
   
   
-
+ 
 <!----------------- footer------------------->		
 <c:import url="/WEB-INF/views/includes/footer.jsp"></c:import>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>

@@ -33,7 +33,7 @@ public class ModuGroupService {
 				.substring(multipartFile.getOriginalFilename().lastIndexOf(".")); // 확장자는 점으로 구별하니까//오리지널파일명에서 마지막 점부터
 																					// 자른다.
 		System.out.println("확장자 = " + exname);
-
+ 
 		// 저장파일명
 		String saveName = System.currentTimeMillis() + UUID.randomUUID().toString() + exname; // 지금시간과 랜덤수 +확장자
 		System.out.println("저장파일명 = " + saveName);

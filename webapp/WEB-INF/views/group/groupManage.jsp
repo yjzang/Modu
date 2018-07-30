@@ -17,7 +17,7 @@
 	
 <c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
 	
-
+ 
 	<div class="container">
 		<center>
 			<div class="col-5 my-5">

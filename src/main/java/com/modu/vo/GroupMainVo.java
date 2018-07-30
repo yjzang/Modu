@@ -13,7 +13,7 @@ public class GroupMainVo {
     private String dongmyun;
     private String ri;
     private String rest;
-
+ 
     private int tagNo;
     private String tagName;
 

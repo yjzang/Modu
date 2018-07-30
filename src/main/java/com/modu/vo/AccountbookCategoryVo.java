@@ -8,7 +8,7 @@ public class AccountbookCategoryVo {
 	
 	public AccountbookCategoryVo() {
 	}
-	
+	 
 	public AccountbookCategoryVo(String categoryName, int groupNo, int total) {
 		this.categoryName = categoryName;
 		this.groupNo = groupNo;

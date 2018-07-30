@@ -27,7 +27,7 @@ public class BoardDao {
 		
 	}
 	
-	
+ 	
 	public String modiPost(BoardVo vo) {
 		
 		//System.out.println("다오 까지 왓수다"+vo.toString());

@@ -18,3 +18,4 @@ public class GroupMainDao {
         return sqlSession.selectList("groupMain.getNews",map);
     }
 }
+ 

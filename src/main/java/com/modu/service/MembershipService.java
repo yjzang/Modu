@@ -25,7 +25,7 @@ public class MembershipService {
 		
 		//회비DB에 집어넣기 
 		MembershipVo mvo = new MembershipVo();
-		
+		 
 		/*userName에 스트링으로 userNo를 가져와서 다시 변환하는 작업*/
 		String[] str = usergroupvo.getUserName().split(",");
 		 int[] user_groupNo = new int[str.length];

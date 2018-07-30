@@ -25,7 +25,7 @@ public class GroupMainService {
         calendar.set(Integer.parseInt(splitDate[0]),Integer.parseInt(splitDate[1])-1,Integer.parseInt(splitDate[2]));//년,월-1,일
         calendar.add(Calendar.DATE,-5);//계산될 날짜(-5일)
         java.util.Date dayago = calendar.getTime();//담기
-
+ 
         inputMap.put("startDay",simpleDateFormat.format(dayago));
         inputMap.put("lastDay",lastDay);
         List<GroupMainVo> newsList = groupMainDao.getNews(inputMap);

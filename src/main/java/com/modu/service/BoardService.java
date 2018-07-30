@@ -27,7 +27,7 @@ public class BoardService {
 	
 	@Transactional
 	public void addPost(BoardVo boardVo, HashMap<String, Object> map) {
-		
+ 		
 		System.out.println("서비스 까지 왓수다");
 		//글 내용
 		String boardNo = dao.addPost(boardVo);

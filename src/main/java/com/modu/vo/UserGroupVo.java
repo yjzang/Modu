@@ -16,7 +16,7 @@ public class UserGroupVo {
 	}
 	public UserGroupVo(int user_groupNo, int userNo, int groupNo, String joinDate, String joinMessage,
 			String joinState,String userName) {
-		this.user_groupNo = user_groupNo;
+		this.user_groupNo = user_groupNo; 
 		this.userNo = userNo;
 		this.groupNo = groupNo;
 		this.joinDate = joinDate;

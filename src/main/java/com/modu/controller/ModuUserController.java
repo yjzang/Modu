@@ -14,7 +14,7 @@ public class ModuUserController {
 
     @Autowired
     private ModuUserService moduUserService;
-
+ 
     @RequestMapping(value = "/emailcheck", method = RequestMethod.POST)
     @ResponseBody
     public int emailCheck(@ModelAttribute ModuUserVo userVo) {

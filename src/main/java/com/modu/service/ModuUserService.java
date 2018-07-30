@@ -21,7 +21,7 @@ public class ModuUserService {
         map.put("group", moduUserDao.loginGroup(userNo));
         return map;
     }
-
+ 
     public void joinUser(ModuUserVo userVo) {
         String birthday = userVo.getUserBirthday();
         birthday = birthday.replace("년", "/");

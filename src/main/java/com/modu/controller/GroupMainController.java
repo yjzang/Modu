@@ -56,7 +56,7 @@ public class GroupMainController {
         return "/group/groupMain";
     }
 
-    @RequestMapping("/groupSearch")
+    @RequestMapping("/groupSearch") 
 	public String Search(@RequestParam("gSearch")String gSearch,Model model,HttpSession session) {
 		ModuUserVo uservo =  (ModuUserVo) session.getAttribute("authUser");
 

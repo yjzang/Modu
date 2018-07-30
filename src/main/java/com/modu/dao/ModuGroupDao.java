@@ -29,7 +29,7 @@ public class ModuGroupDao {
 	public List<ModuGroupVo> selectGroup(int userNo) {
 		return sqlSession.selectList("group.selectGroupList",userNo);
 	}
-    
+     
 	//내가 클릭한 그룹이미지, 이름
 	public ModuGroupVo selectGroupImg(int groupNo) {
 
